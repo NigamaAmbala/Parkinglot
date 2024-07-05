@@ -1,0 +1,39 @@
+{
+	"selectedKey": "page2",
+	"navigation": [
+		{
+			"title": "Profile",
+			"key": "page1"
+		},
+		{
+			"title": "Assign Parking lot",
+			"key": "page2"
+		},
+		{
+			"title": "All Parking lots",
+			"key": "page3"
+		},
+        {
+			"title": "Empty Lots",
+			"key": "page4"
+		},
+        {
+			"title": "Allocated lots",
+			"key": "page5"
+		},
+		{
+			"title": "History",
+			"icon": "sap-icon://customer-history",
+			"key": "page6"
+		},
+		{
+			"title": "Reservations",
+			"key": "page7"
+		},
+		{
+			"title": "Charts",
+			"icon":"sap-icon://pie-chart",
+			"key": "page8"
+		}
+    ]
+}

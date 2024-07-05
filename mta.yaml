@@ -1,0 +1,139 @@
+_schema-version: "3.1"
+ID: parking-lot
+description: A simple CAP project.
+version: 1.0.0
+modules:
+  - name: parking-lot-srv
+    type: nodejs
+    path: gen/srv
+    requires:
+      - name: uaa_parking-lot
+      - name: parking-lot-db
+    provides:
+      - name: srv-api
+        properties:
+          srv-url: ${default-url}
+    parameters:
+      buildpack: nodejs_buildpack
+      readiness-health-check-http-endpoint: /health
+      readiness-health-check-type: http
+    build-parameters:
+      builder: npm
+  - name: parking-lot-destination-content
+    type: com.sap.application.content
+    requires:
+      - name: parking-lot-destination-service
+        parameters:
+          content-target: true
+      - name: parking-lot_html_repo_host
+        parameters:
+          service-key:
+            name: parking-lot_html_repo_host-key
+      - name: uaa_parking-lot
+        parameters:
+          service-key:
+            name: uaa_parking-lot-key
+    parameters:
+      content:
+        instance:
+          destinations:
+            - Name: approuter_parking_lot_html_repo_host
+              ServiceInstanceName: parking-lot-html5-app-host-service
+              ServiceKeyName: parking-lot_html_repo_host-key
+              sap.cloud.service: approuter
+            - Authentication: OAuth2UserTokenExchange
+              Name: approuter_uaa_parking_lot
+              ServiceInstanceName: parking-lot-xsuaa-service
+              ServiceKeyName: uaa_parking-lot-key
+              sap.cloud.service: approuter
+          existing_destinations_policy: ignore
+    build-parameters:
+      no-source: true
+  - name: parking-lot-app-content
+    type: com.sap.application.content
+    path: .
+    requires:
+      - name: parking-lot_html_repo_host
+        parameters:
+          content-target: true
+    build-parameters:
+      build-result: resources
+      requires:
+        - artifacts:
+            - comappyardmanagment.zip
+          name: comappyardmanagment
+          target-path: resources/
+  - name: comappyardmanagment
+    type: html5
+    path: app/yard-managment
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm install
+        - npm run build:cf
+      supported-platforms:
+        []
+
+  - name: parking-lot-db-deployer
+    type: hdb
+    path: gen/db
+    parameters:
+      buildpack: nodejs_buildpack
+    requires:
+      - name: parking-lot-db
+resources:
+  - name: parking-lot-destination-service
+    type: org.cloudfoundry.managed-service
+    parameters:
+      config:
+        HTML5Runtime_enabled: true
+        init_data:
+          instance:
+            destinations:
+              - Authentication: NoAuthentication
+                Name: ui5
+                ProxyType: Internet
+                Type: HTTP
+                URL: https://ui5.sap.com
+              - Authentication: NoAuthentication
+                HTML5.DynamicDestination: true
+                HTML5.ForwardAuthToken: true
+                Name: parking-lot-srv-api
+                ProxyType: Internet
+                Type: HTTP
+                URL: ~{srv-api/srv-url}
+            existing_destinations_policy: update
+        version: 1.0.0
+      service: destination
+      service-name: parking-lot-destination-service
+      service-plan: lite
+    requires:
+      - name: srv-api
+  - name: parking-lot_html_repo_host
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-name: parking-lot-html5-app-host-service
+      service-plan: app-host
+  - name: uaa_parking-lot
+    type: org.cloudfoundry.managed-service
+    parameters:
+      path: ./xs-security.json
+      service: xsuaa
+      service-name: parking-lot-xsuaa-service
+      service-plan: application
+  - name: parking-lot-db
+    type: com.sap.xs.hdi-container
+    parameters:
+      service: hana
+      service-plan: hdi-shared
+parameters:
+  deploy_mode: html5-repo
+  enable-parallel-deployments: true
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npm ci
+        - npx cds build --production

@@ -1,0 +1,26 @@
+/* Enter your custom styles here */
+.Homepageclass {
+    background-image: url("https://www.americanmfgsolutions.com/images/2022/02/24/top-view-parking-lot-with-parked-trucks-2021-12-09-02-42-24-utc_large.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 100vh;
+  }
+  .Heading {
+    font-weight:bolder;
+    color: black;
+  }
+  .Bold {
+    font-weight:bolder;
+    color:indigo;
+  }
+  .sapUiContentPadding {
+    background:mintcream;
+  }
+  .sidecontent {
+    background-color:floralwhite;
+  }
+  .Flexbox {
+    padding-right: 50%;
+    margin-top: 60px;
+  }
