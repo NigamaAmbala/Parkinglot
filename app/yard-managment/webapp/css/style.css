@@ -15,7 +15,7 @@
     color:indigo;
   }
   .sapUiContentPadding {
-    background:mintcream;
+    background:rgba(188, 143, 143, 0.356)
   }
   .sidecontent {
     background-color:floralwhite;
@@ -23,4 +23,28 @@
   .Flexbox {
     padding-right: 50%;
     margin-top: 60px;
+  }
+  .SimpleForm{
+    padding-right: 50%;
+    margin-left: 250px;
+    margin-top: 50px;
+  }
+  .Reserveheading{
+    margin-bottom: 20px;
+    color: brown;
+  }
+  .Hbox{
+    margin-top: 20px;
+  }
+  .Button{
+    margin-left: 320px;
+  }
+  .Button1{
+    margin-left: 20px;
+  }
+  .Button2{
+    margin-left: 230px;
+  }
+  .Titles{
+    color: rgb(147, 25, 25);
   }

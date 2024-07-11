@@ -7,6 +7,7 @@
     xmlns:tnt="sap.tnt"
     xmlns:l="sap.ui.layout"
     xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form"
     height="100%"
 >
     <tnt:ToolPage id="toolPage">
@@ -21,7 +22,6 @@
                     <layoutData>
                         <OverflowToolbarLayoutData priority="NeverOverflow" />
                     </layoutData>
-                    
                 </Button>
                 <Label
                     class="Heading"
@@ -37,10 +37,10 @@
                         />
                     </layoutData>
                 </ToolbarSpacer>
-                <Button 
-                        icon="sap-icon://notification-2"
-                        type="Attention"> 
-                </Button>
+                <Button
+                    icon="sap-icon://notification-2"
+                    type="Attention"
+                />
             </tnt:ToolHeader>
         </tnt:header>
         <tnt:sideContent>
@@ -124,6 +124,7 @@
                                             placeholder="Enter vehicle number"
                                             width="100%"
                                             value="{localModel>/VDetails/vehicleNo}"
+                                            submit=".vehiclenumber"
                                         />
                                     </VBox>
 
@@ -168,7 +169,7 @@
                                     >
                                         <Label
                                             id="_IDGenLabel3"
-                                            text="Vehicle Type"
+                                            text="vehicle Type"
                                             class="Bold"
                                         />
                                         <Input
@@ -212,24 +213,23 @@
                                         id="_IDGenHBox1"
                                         width="100%"
                                         alignItems="Center"
+                                        class="Hbox"
                                     >
                                         <Button
                                             id="idbuttonassign"
                                             text="Assign"
                                             press="onAssignPressbtn"
-                                            
                                             type="Success"
                                         />
                                         <Button
                                             id="idbuttonunassign"
-                                            text="Unassign" 
+                                            text="Unassign"
                                             press="onUnassignPressbtn"
-                                            
                                             type="Negative"
                                         />
                                         <Button
                                             id="idbuttonunclear"
-                                            text="Clear" 
+                                            text="Clear"
                                             press="onclearPress"
                                             width="120px"
                                             type="Accept"
@@ -253,15 +253,15 @@
                             items="{/Parkinglot}"
                             width="30%"
                         >
-                        <headerToolbar>
-                    <OverflowToolbar id="idSlotsTableHeader1">
-                        <Title
-                            id="idTableHeaderTitle1"
-                            text="All lots"
-                            class="heading"
-                        />
-                        </OverflowToolbar>
-                </headerToolbar>
+                            <headerToolbar>
+                                <OverflowToolbar id="idSlotsTableHeader1">
+                                    <Title
+                                        id="idTableHeaderTitle1"
+                                        text="All Slots"
+                                        class="Titles"
+                                    />
+                                </OverflowToolbar>
+                            </headerToolbar>
                             <columns>
                                 <Column id="idSlotNO">
                                     <Title
@@ -312,15 +312,16 @@
                             items="{/Parkinglot}"
                             width="30%"
                         >
-                        <headerToolbar>
-                    <OverflowToolbar id="idSlotsTableHeader2">
-                        <Title
-                            id="idTableHeaderTitle2"
-                            text="Empty lots"
-                            class="heading"
-                        />
-                        </OverflowToolbar>
-                </headerToolbar>
+                            <headerToolbar>
+                                <OverflowToolbar id="idSlotsTableHeader2">
+                                    <Title
+                                        id="idTableHeaderTitle2"
+                                        text="Empty Slots"
+                                        class="Titles"
+                                        
+                                    />
+                                </OverflowToolbar>
+                            </headerToolbar>
                             <columns>
                                 <Column id="idSlotNO1">
                                     <Title
@@ -336,8 +337,10 @@
                                 </Column>
                             </columns>
                             <items>
-                                <ColumnListItem id="idColumnListAllSlots1" 
-                                                visible="{path : 'parkingType'}">
+                                <ColumnListItem
+                                    id="idColumnListAllSlots1"
+                                    visible="{path : 'parkingType'}"
+                                >
                                     <cells>
                                         <Text
                                             id="idSlotNoValue1"
@@ -369,16 +372,24 @@
                             alternateRowColors="true"
                             backgroundDesign="Transparent"
                             items="{/VDetails}"
+                            mode="MultiSelect"
                         >
-                        <headerToolbar>
-                    <OverflowToolbar id="idSlotsTableHeader">
-                        <Title
-                            id="idTableHeaderTitle"
-                            text="Allocated Slots"
-                            class="heading"
-                        />
-                        </OverflowToolbar>
-                </headerToolbar>
+                            <headerToolbar>
+                                <OverflowToolbar id="idSlotsTableHeader">
+                                    <Title
+                                        id="idTableHeaderTitle"
+                                        text="Allocated Slots"
+                                        class="Titles"
+                                    />
+                                    <ToolbarSpacer id="idTableHeaderSpacer" />
+                                    <Button
+                                        id="idBtnUnassign"
+                                        type="Emphasized"
+                                        press="Unassigned"
+                                        text="Unassign"
+                                    />
+                                </OverflowToolbar>
+                            </headerToolbar>
                             <columns>
                                 <Column id="idSlotNO2">
                                     <Title
@@ -424,32 +435,27 @@
                                             id="idSlotNoValue2"
                                             text="{parkinglot_lotId}"
                                         />
-                                    </cells>
-                                    <cells>
+
                                         <Text
                                             id="idVehicleNumber1"
                                             text="{vehicleNo}"
                                         />
-                                    </cells>
-                                    <cells>
+
                                         <Text
                                             id="idAssignedOn1"
                                             text="{inTime}"
                                         />
-                                    </cells>
-                                    <cells>
+
                                         <Text
                                             id="idvehicletype"
                                             text="{vehicleType}"
                                         />
-                                    </cells>
-                                    <cells>
+
                                         <Text
                                             id="idDrivername"
                                             text="{driverName}"
                                         />
-                                    </cells>
-                                    <cells>
+
                                         <Text
                                             id="idDriverphonenumber"
                                             text="{phoneNumber}"
@@ -470,94 +476,322 @@
                             id="idHistory"
                             alternateRowColors="true"
                             backgroundDesign="Transparent"
-                            items="{/VDetails}"
+                            items="{/History}"
+                            mode="MultiSelect"
                         >
-                            <columns>
-                                <Column id="idSlotNO3">
+                            <headerToolbar>
+                                <OverflowToolbar id="idHistoryTableHeader">
                                     <Title
-                                        id="idSlotNotitle3"
-                                        text="Slot No"
+                                        id="idHistoryHeaderTitle"
+                                        text="History"
+                                        class="Titles"
                                     />
-                                </Column>
-                                <Column id="idVehicleNumber2">
-                                    <Title
-                                        id="idVehicleNumbertitle1"
+                                </OverflowToolbar>
+                            </headerToolbar>
+                            <columns>
+                                <Column id="idcolvehiclenoHistory">
+                                    <Text
+                                        id="idtexthistoryvhno"
                                         text="Vehicle No"
                                     />
                                 </Column>
-                                <Column id="idAssignedOn2">
-                                    <Title
-                                        id="idAssignedOntitle1"
-                                        text="Assigned On"
-                                    />
-                                </Column>
-                                <Column id="idUnAssignedOn2">
-                                    <Title
-                                        id="idUnAssignedOntitle1"
-                                        text="UnAssigned On"
-                                    />
-                                </Column>
-                                <Column id="idvehicleType1">
-                                    <Title
-                                        id="idvehicleTypetitle1"
-                                        text="Vehicle Type"
-                                    />
-                                </Column>
-                                <Column id="idDriverName1">
-                                    <Title
-                                        id="idDriverNametitle1"
+                                <Column id="idcoldrivernameHistory">
+                                    <Text
+                                        id="idtexthistoryname"
                                         text="Driver Name"
                                     />
                                 </Column>
-                                <Column id="idDriverPhnum1">
-                                    <Title
-                                        id="idDriverPhnumtitle1"
-                                        text="Phonenumber"
+                                <Column id="idcoldriverphHistory">
+                                    <Text
+                                        id="idtexthistoryphno"
+                                        text=" Phone Number"
+                                    />
+                                </Column>
+                                <Column id="idcolvehicletypeHistory">
+                                    <Text
+                                        id="idtexthistoryvtype"
+                                        text="Vehicle Type"
+                                    />
+                                </Column>
+                                <Column id="idcolparkinglotHistory">
+                                    <Text
+                                        id="idtexthistoryplot"
+                                        text="Slot No"
+                                    />
+                                </Column>
+                                <Column id="idcolintime">
+                                    <Text
+                                        id="idtexthistoryintime"
+                                        text="In Time"
+                                    />
+                                </Column>
+                                <Column id="idcolouttime">
+                                    <Text
+                                        id="idtexthistoryoutime"
+                                        text="Out Time"
                                     />
                                 </Column>
                             </columns>
                             <items>
-                                <ColumnListItem id="idColumnListAlocatedSlots1">
+                                <ColumnListItem
+                                    id="Historyslots"
+                                    class="classassigned"
+                                >
                                     <cells>
                                         <Text
-                                            id="idSlotNoValue3"
-                                            text="{parkinglot/lotId}"
-                                        />
-                                    </cells>
-                                    <cells>
-                                        <Text
-                                            id="idVehicleNumber3"
+                                            id="cellhistoryvno"
                                             text="{vehicleNo}"
                                         />
                                     </cells>
                                     <cells>
                                         <Text
-                                            id="idAssignedOn3"
-                                            text="{inDate}"
-                                        />
-                                    </cells>
-                                    <cells>
-                                        <Text
-                                            id="idUnAssignedOn3"
-                                            text="{outDate}"
-                                        />
-                                    </cells>
-                                    <cells>
-                                        <Text
-                                            id="idvehicletype1"
-                                            text="{vehicleType}"
-                                        />
-                                    </cells>
-                                    <cells>
-                                        <Text
-                                            id="idDrivername1"
+                                            id="cellhistorydbname"
                                             text="{driverName}"
                                         />
                                     </cells>
                                     <cells>
                                         <Text
-                                            id="idDriverphonenumber1"
+                                            id="cellhistoryph"
                                             text="{phoneNumber}"
+                                        />
+                                    </cells>
+                                    <cells>
+                                        <Text
+                                            id="cellhistoryvtype"
+                                            text="{vehicleType}"
+                                        />
+                                    </cells>
+                                    <cells>
+                                        <Text
+                                            id="cellhistoryptno"
+                                            text="{parkinglot_lotId}"
+                                        />
+                                    </cells>
+                                    <cells>
+                                        <Text
+                                            id="cellhistoryintime"
+                                            text="{inTime}"
+                                        />
+                                    </cells>
+                                    <cells>
+                                        <Text
+                                            id="cellhistoryoutime"
+                                            text="{UnassignedDate}"
+                                        />
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </ScrollContainer>
+                    <ScrollContainer
+                        id="page7"
+                        horizontal="false"
+                        vertical="true"
+                        height="100%"
+                        class="sapUiContentPadding"
+                    >
+                        <f:SimpleForm
+                            id="reservationForm"
+                            layout="ResponsiveGridLayout"
+                            editable="true"
+                            columnsM="2"
+                            columnsL="3"
+                            columnsXL="4"
+                            class="SimpleForm"
+                        >
+                        <Title text="RESERVATION"
+                                  class="Reserveheading" />
+                            <VBox id="ReserveVbox">
+                                <Label
+                                    id="idVehicleNumberLabel"
+                                    text="Vehicle No"
+                                    class="Bold"
+                                />
+                                <Input
+                                    id="InputVehicleno"
+                                    value="{reserveModel>/Reservations/vehicleNo}"
+                                    placeholder="Enter Vehicle Number"
+                                />
+                                <Label
+                                    id="idDriverNameLabel"
+                                    text="Driver Name"
+                                     class="Bold"
+                                />
+                                <Input
+                                    id="InputDriverName"
+                                    value="{reserveModel>/Reservations/driverName}"
+                                    placeholder="Enter Driver Name"
+                                />
+                                <Label
+                                    id="idphonenumberLabel"
+                                    text="Phone Number"
+                                     class="Bold"
+                                />
+                                <Input
+                                    id="InputPhonenumber"
+                                    value="{reserveModel>/Reservations/phoneNumber}"
+                                    placeholder="Enter Phone number"
+                                />
+                                <Label
+                                    id="idVehicletypeLabel"
+                                    text="Vehicle Type"
+                                     class="Bold"
+                                />
+                                <Input
+                                    id="InputVehicletype"
+                                    placeholder="Enter Vehicle Type"
+                                    value="{reserveModel>/Reservations/vehicleType}"
+                                />
+                                <Label
+                                    id="idParkinglotLabel"
+                                    text="Parking lot"
+                                     class="Bold"
+                                />
+                                <Input
+                                    id="productInput1"
+                                    placeholder="Enter praking lot"
+                                    showSuggestion="true"
+                                    showValueHelp="true"
+                                    valueHelpRequest=".onValueHelpRequest1"
+                                    suggestionItems="{/Parkinglot}"
+                                    value="{parkinglot_lotId}"
+                                >
+                                    <suggestionItems>
+                                        <core:ListItem
+                                            key="{lotId}"
+                                            text="{lotId}"
+                                            additionalText="{lotId}"
+                                        />
+                                    </suggestionItems>
+                                </Input>
+                                <Label
+                                    id="idEstimatedtimeLabel"
+                                    text="Estimated Time"
+                                     class="Bold"
+                                />
+                                <DateTimePicker
+                                    id="InputEstimatedtime"
+                                    placeholder="Enter Time"
+                                    value="{reserveModel>/Reservations/ReservedDate}"
+                                />
+                               <HBox
+                                        id="_IDReserveHBox1"
+                                        alignItems="Center"
+                                        class="Hbox"
+                                    >
+                                        <Button
+                                            id="idbuttonreserve"
+                                            text="Reserve"
+                                            press="onReservePressbtn"
+                                            type="Success"
+                                            class="Button"
+                                        />
+                                    </HBox>
+                            </VBox>
+                        </f:SimpleForm>
+                    </ScrollContainer>
+                     <ScrollContainer
+                        id="page8"
+                        horizontal="false"
+                        vertical="true"
+                        height="100%"
+                        class="sapUiContentPadding"
+                    >
+                    <Table
+                            id="idReserved"
+                            alternateRowColors="true"
+                            backgroundDesign="Transparent"
+                            items="{/Reservations}"
+                            mode="MultiSelect"
+                        >
+                            <headerToolbar>
+                                <OverflowToolbar id="idReservedTableHeader">
+                                    <Title
+                                        id="idReservedHeaderTitle"
+                                        text="Reserved Slots"
+                                        class="Titles"
+                                    />
+                                </OverflowToolbar>
+                            </headerToolbar>
+                            <columns>
+                                <Column id="idcolvehiclenoReserved">
+                                    <Text
+                                        id="idtextreservedvhno"
+                                        text="Vehicle No"
+                                    />
+                                </Column>
+                                <Column id="idcoldrivername">
+                                    <Text
+                                        id="idtextreservedname"
+                                        text="Driver Name"
+                                    />
+                                </Column>
+                                <Column id="idcoldriverphno">
+                                    <Text
+                                        id="idtextyphno"
+                                        text=" Phone Number"
+                                    />
+                                </Column>
+                                <Column id="idcolvehicletype">
+                                    <Text
+                                        id="idtextvtype"
+                                        text="Vehicle Type"
+                                    />
+                                </Column>
+                                <Column id="idcolparkinglot">
+                                    <Text
+                                        id="idtextplot"
+                                        text="Slot No"
+                                    />
+                                </Column>
+                    
+                                <Column id="idcolReservedtime">
+                                    <Text
+                                        id="idtextoutime"
+                                        text="Reserved Time"
+                                    />
+                                </Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem
+                                    id="Reservedslots"
+                                    class="classassigned"
+                                >
+                                    <cells>
+                                        <Text
+                                            id="cellvno"
+                                            text="{vehicleNo}"
+                                        />
+                                    </cells>
+                                    <cells>
+                                        <Text
+                                            id="celldbname"
+                                            text="{driverName}"
+                                        />
+                                    </cells>
+                                    <cells>
+                                        <Text
+                                            id="cellph"
+                                            text="{phoneNumber}"
+                                        />
+                                    </cells>
+                                    <cells>
+                                        <Text
+                                            id="cellvtype"
+                                            text="{vehicleType}"
+                                        />
+                                    </cells>
+                                    <cells>
+                                        <Text
+                                            id="cellptno"
+                                            text="{parkinglot_lotId}"
+                                        />
+                                    </cells>
+                    
+                                    <cells>
+                                        <Text
+                                            id="cellReservedetime"
+                                            text="{ReservedDate}"
                                         />
                                     </cells>
                                 </ColumnListItem>

@@ -7,18 +7,22 @@
 		},
 		{
 			"title": "Assign Parking lot",
+			"icon":"sap-icon://approvals",
 			"key": "page2"
 		},
 		{
 			"title": "All Parking lots",
+			"icon":"sap-icon://activity-items",
 			"key": "page3"
 		},
         {
 			"title": "Empty Lots",
+			"icon":"sap-icon://check-availability",
 			"key": "page4"
 		},
         {
 			"title": "Allocated lots",
+			"icon":"sap-icon://activity-assigned-to-goal",
 			"key": "page5"
 		},
 		{
@@ -28,10 +32,11 @@
 		},
 		{
 			"title": "Reservations",
+			"icon":"sap-icon://appointment",
 			"key": "page7"
 		},
 		{
-			"title": "Charts",
+			"title": "Reserved slots",
 			"icon":"sap-icon://pie-chart",
 			"key": "page8"
 		}

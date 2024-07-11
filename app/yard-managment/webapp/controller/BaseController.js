@@ -21,6 +21,18 @@ sap.ui.define(
                 })
             })
         },
+        deleteData: function(oModel, sPath, ID){
+            return new Promise((resolve, reject) => {
+                oModel.remove(`${sPath}/${ID}`, {
+                    success: function(oSuccessData){
+                        resolve(oSuccessData);
+                    },
+                    error: function(oErrorData){
+                        reject(oErrorData)
+                    }
+                })
+            })            
+        }
       });
     }
   );

@@ -1,18 +1,39 @@
 namespace my.parkinglots;
 
 entity Parkinglot {
-  key lotId : String;
-    parkingType: Boolean;
-    vehicledetails : Association to VDetails;
+  key lotId          : String;
+      parkingType    : Boolean;
+      vehicledetails : Association to VDetails;
 }
 
 entity VDetails {
-   Key vehicleNo : String;
-   driverName : String;
-   phoneNumber : String;
-   vehicleType : String;
-   inTime : DateTime;
-   outTime : String;
-   parkinglot : Association to Parkinglot;   
+  key vehicleNo      : String;
+      driverName     : String;
+      phoneNumber    : String;
+      vehicleType    : String;
+      inTime         : DateTime;
+      UnassignedDate : String;
+      parkinglot     : Association to Parkinglot;
 }
 
+entity History {
+key vehicleNo    : String;
+  driverName     : String;
+  phoneNumber    : String;
+  vehicleType    : String;
+  inTime         : DateTime;
+  UnassignedDate : DateTime;
+  parkinglot     : Association to Parkinglot;
+  vehicledetails : Association to VDetails;
+}
+
+entity Reservations {
+  key vehicleNo  : String;
+  driverName     : String;
+  phoneNumber    : String;
+  vehicleType    : String;
+  ReservedDate   : String;
+  parkinglot     : Association to Parkinglot;
+  vehicledetails : Association to VDetails;
+  
+}
