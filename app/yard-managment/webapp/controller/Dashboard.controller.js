@@ -6,7 +6,8 @@ sap.ui.define([
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "sap/m/MessageBox",
-    "sap/m/MessageToast"
+    "sap/m/MessageToast",
+   
 
 ], function (Controller, Device, JSONModel, Fragment, Filter, FilterOperator, MessageBox, MessageToast) {
     "use strict";
@@ -226,7 +227,7 @@ sap.ui.define([
         checkPlotAvailability: async function (oModel, plotNo) {
             return new Promise((resolve, reject) => {
                 oModel.read("/Parkinglot('" + plotNo + "')", {
-                    success: function (oData) {
+                    success: function (oData) { 
                         resolve(oData.parkingType);
                     },
                     error: function (oError) {
@@ -312,48 +313,47 @@ sap.ui.define([
             }
         },
     // For vehicle number
-        vehiclenumber : function (oEvent) {
-            debugger
-            const oLocalModel = this.getView().byId("page2").getModel("localModel");
-            const oModel = this.getView().byId("pageContainer").getModel("ModelV2");
-            const svehicleNo = oEvent.getParameter("value");
- 
-            oModel.read("/VDetails", {
-                filters: [
-                    new Filter("vehicleNo", FilterOperator.EQ, svehicleNo)
-                ],
-                success: function (oData) {
-                    var aVehicles = oData.results;
-                    if (aVehicles.length > 0) {
-                        // Assuming there's only one record with unique vehicalNo
-                        var oVehicle = aVehicles[0];
-                        // Set other fields based on the found vehicle
-                        oLocalModel.setProperty("/VDetails/vehicleNo", oVehicle.vehicleNo);
-                        oLocalModel.setProperty("/VDetails/driverName", oVehicle.driverName);
-                        oLocalModel.setProperty("/VDetails/phoneNumber", oVehicle.phoneNumber);
-                        oLocalModel.setProperty("/VDetails/vehicleType", oVehicle.vehicleType);
-                        oLocalModel.setProperty("/VDetails/inTime", oVehicle.inTime);
-                        oLocalModel.setProperty("/VDetails/parkinglot_lotId", oVehicle.parkinglot_lotId);
-                        oView.byId("productInput").setValue(oVehicle.parkinglot_lotId)
-                        // Set other fields as needed
-                    } else {
-                        // Handle case where vehicle number was not found
-                        sap.m.MessageToast.show("Vehicle number not found.");
-                        // Optionally clear other fields
-                        oLocalModel.setProperty("/VDetails/vehicleNo", "");
-                        oLocalModel.setProperty("/VDetails/driverName", "");
-                        oLocalModel.setProperty("/VDetails/phoneNumber", "");
-                        oLocalModel.setProperty("/VDetails/vehicleType", "");
-                        oLocalModel.setProperty("/VDetails/inTime", "");
-                        // Clear other fields as needed
-                    }
-                }.bind(this),
-                error: function (oError) {
-                    sap.m.MessageToast.show("Error fetching vehicle details: " + oError.message);
+    vehiclenumber : function (oEvent) {
+        debugger
+        const oLocalModel = this.getView().byId("page2").getModel("localModel");
+        const oModel = this.getView().byId("pageContainer").getModel("ModelV2");
+        const svehicleNo = oEvent.getParameter("value");
+
+        oModel.read("/VDetails", {
+            filters: [
+                new Filter("vehicleNo", FilterOperator.EQ, svehicleNo)
+            ],
+            success: function (oData) {
+                var aVehicles = oData.results;
+                if (aVehicles.length > 0) {
+                    // Assuming there's only one record with unique vehicalNo
+                    var oVehicle = aVehicles[0];
+                    // Set other fields based on the found vehicle
+                    oLocalModel.setProperty("/VDetails/vehicleNo", oVehicle.vehicleNo);
+                    oLocalModel.setProperty("/VDetails/driverName", oVehicle.driverName);
+                    oLocalModel.setProperty("/VDetails/phoneNumber", oVehicle.phoneNumber);
+                    oLocalModel.setProperty("/VDetails/vehicleType", oVehicle.vehicleType);
+                    oLocalModel.setProperty("/VDetails/inTime", oVehicle.inTime);
+                    oLocalModel.setProperty("/VDetails/parkinglot_lotId", oVehicle.parkinglot_lotId);
+                    oView.byId("productInput").setValue(oVehicle.parkinglot_lotId)
+                    // Set other fields as needed
+                } else {
+                    // Handle case where vehicle number was not found
+                    sap.m.MessageToast.show("Vehicle number not found.");
+                    // Optionally clear other fields
+                    oLocalModel.setProperty("/VDetails/vehicleNo", "");
+                    oLocalModel.setProperty("/VDetails/driverName", "");
+                    oLocalModel.setProperty("/VDetails/phoneNumber", "");
+                    oLocalModel.setProperty("/VDetails/vehicleType", "");
+                    oLocalModel.setProperty("/VDetails/inTime", "");
+                    // Clear other fields as needed
                 }
- 
-            })
-        },
+            }.bind(this),
+            error: function (oError) {
+            }
+
+        })
+    },
 
         onReservePressbtn : async function() {
 
@@ -415,5 +415,59 @@ sap.ui.define([
             // Clear any other necessary fields or models
             this.getView().byId("productInput1").setValue("");
         },
+        onpressassignrd: async function () {
+			debugger
+			var oSelected = this.byId("idReserved").getSelectedItems();
+			if (oSelected.length === 0) {
+				MessageBox.error("Please Select atleast row to Assign");
+				return
+			};
+
+			var oSelectedRow = this.byId("idReserved").getSelectedItem().getBindingContext().getObject();
+			var orow = this.byId("idReserved").getSelectedItem().getBindingContext().getPath();
+			const intime = new Date;
+			var resmodel = new JSONModel({
+				vehicleNo: oSelectedRow.vehicleNo,
+				driverName: oSelectedRow.driverName,
+				phoneNumber: oSelectedRow.phoneNumber,
+				vehicleType: oSelectedRow.vehicleType,
+				inTime: intime,
+				parkinglot_lotId: oSelectedRow.parkinglot_lotId,
+
+			});
+			var temp = oSelectedRow.parkinglot_lotId;
+
+			const oModel = this.getView().byId("pageContainer").getModel("ModelV2");
+			debugger
+			this.getView().byId("page8").setModel(resmodel, "resmodel");
+			this.getView().byId("page8").getModel("resmodel").getProperty("/");
+			oModel.create("/VDetails", resmodel.getData(), {
+				success: function (odata) {
+					debugger
+					oModel.remove(orow, {
+						success: function () {
+							oModel.refresh()
+							oModel.update("/Parkinglot('" + temp + "')", { parkingType: false }, {
+								success: function () {
+									sap.m.MessageBox.success(`Reserved Vehicle ${oSelectedRow.vehicleNo} assigned successfully to plot ${oSelectedRow.parkinglot_lotId}.`);
+									oModel.refresh();
+								}, error: function () {
+									sap.m.MessageBox.error("Unable to Update");
+								}
+
+							})
+						},
+						error: function (oError) {
+							sap.m.MessageBox.error("Failed to update : " + oError.message);
+						}
+
+					})
+
+				},
+				error: function (oError) {
+					sap.m.MessageBox.error("Failed to update : " + oError.message);
+				}
+			})
+		}
     });
 });

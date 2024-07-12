@@ -711,6 +711,29 @@
                                         text="Reserved Slots"
                                         class="Titles"
                                     />
+                                    <HBox id="idHbox">
+                                    <Label
+                                    id="idSerarchLabel"
+                                    class="Bold"
+                                    
+                                />
+                                <Input id="searchinput"
+                                        value=""
+                                         placeholder="Enter vehicle No"/>
+                                    
+                                    <Button id="Gobutton"
+                                            text="GO"
+                                            type="Attention"
+                                            press="onGoPress"></Button>
+                                        
+                                    </HBox>
+                                    <ToolbarSpacer id="idTableHeaderreserve" />
+                                    <Button
+                                        id="idassign"
+                                        press="onpressassignrd"
+                                        text="assign"
+                                        type="Success"
+                                    />
                                 </OverflowToolbar>
                             </headerToolbar>
                             <columns>
