@@ -2,10 +2,6 @@
 	"selectedKey": "page2",
 	"navigation": [
 		{
-			"title": "Profile",
-			"key": "page1"
-		},
-		{
 			"title": "Assign Parking lot",
 			"icon":"sap-icon://approvals",
 			"key": "page2"
@@ -37,8 +33,13 @@
 		},
 		{
 			"title": "Reserved slots",
-			"icon":"sap-icon://pie-chart",
+			"icon":"sap-icon://detail-view",
 			"key": "page8"
+		},
+		{
+			"title": "Charts",
+			"icon":"sap-icon://pie-chart",
+			"key": "page9"
 		}
     ]
 }

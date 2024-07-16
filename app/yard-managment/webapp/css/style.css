@@ -15,10 +15,10 @@
     color:indigo;
   }
   .sapUiContentPadding {
-    background:rgba(188, 143, 143, 0.356)
+    background:rgba(186, 134, 134, 0.356)
   }
   .sidecontent {
-    background-color:floralwhite;
+    background-color:lightslategray
   }
   .Flexbox {
     padding-right: 50%;
@@ -47,4 +47,7 @@
   }
   .Titles{
     color: rgb(147, 25, 25);
+  }
+  .searchInput{
+    margin-right: 50px;
   }
