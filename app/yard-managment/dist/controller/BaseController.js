@@ -1,0 +1,2 @@
+sap.ui.define(["sap/ui/core/mvc/Controller"],function(e){"use strict";return e.extend("com.app.yardmanagment.controller.BaseController",{onInit:function(){},createData:function(e,n,r){return new Promise((t,o)=>{e.create(r,n,{refreshAfterChange:true,success:function(e){t(e)},error:function(e){o(e)}})})},deleteData:function(e,n,r){return new Promise((t,o)=>{e.remove(`${n}/${r}`,{success:function(e){t(e)},error:function(e){o(e)}})})}})});
+//# sourceMappingURL=BaseController.js.map

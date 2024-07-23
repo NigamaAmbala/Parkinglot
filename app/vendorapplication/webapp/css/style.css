@@ -1,0 +1,23 @@
+/* Enter your custom styles here */
+.SmartformVbox{
+    margin-top: 40px;
+}
+.page{
+    background-color: antiquewhite;
+}
+
+.Reserveheading{
+    margin-bottom: 20px;
+    color: brown;
+  }
+
+  .Bold {
+    font-weight:bolder;
+    color:indigo;
+  }
+  .Button{
+    margin-left: 150px;
+  } 
+  .Hbox{
+    margin-top: 20px;
+  }

@@ -1,0 +1,18 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<SelectDialog
+		id="selectDialog"
+		title="Parking lots"
+		items="{
+        path: '/Parkinglot',
+        filters: [{ path: 'parkingType', operator: 'EQ', value1: true }]}"
+		search=".onValueHelpDialogSearch"
+		confirm=".onValueHelpDialogClose"
+		cancel=".onValueHelpDialogClose">
+		<StandardListItem
+			iconDensityAware="false"
+			iconInset="false"
+			title="{lotId}"
+            description="{lotId}"
+             />
+	</SelectDialog>
+</core:FragmentDefinition>

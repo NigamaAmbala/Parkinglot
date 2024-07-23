@@ -63,6 +63,10 @@ modules:
             - comappyardmanagment.zip
           name: comappyardmanagment
           target-path: resources/
+        - artifacts:
+            - comappvendorapplication.zip
+          name: comappvendorapplication
+          target-path: resources/
   - name: comappyardmanagment
     type: html5
     path: app/yard-managment
@@ -74,14 +78,24 @@ modules:
         - npm run build:cf
       supported-platforms:
         []
-
   - name: parking-lot-db-deployer
     type: hdb
     path: gen/db
-    parameters:
-      buildpack: nodejs_buildpack
     requires:
       - name: parking-lot-db
+    parameters:
+      buildpack: nodejs_buildpack
+  - name: comappvendorapplication
+    type: html5
+    path: app/vendorapplication
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm install
+        - npm run build:cf
+      supported-platforms:
+        []
 resources:
   - name: parking-lot-destination-service
     type: org.cloudfoundry.managed-service

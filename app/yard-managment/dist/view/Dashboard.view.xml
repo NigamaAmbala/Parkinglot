@@ -42,23 +42,10 @@
                         />
                     </layoutData>
                 </ToolbarSpacer>
-                
-                    <Button
-                        icon="sap-icon://bell"
-                        press="onNotificationPress"
-                        type="Transparent"
-                    >
-                    <customData>
-                    <BadgeCustomData
-                     value="{/Reservations/$count}"
-                            visible="true" >
-                   
-                   
-                    </BadgeCustomData>
-                    </customData>
-                   
-                    </Button>
-                
+                <Button
+                    icon="sap-icon://notification-2"
+                    type="Attention"
+                />
             </tnt:ToolHeader>
         </tnt:header>
         <tnt:sideContent>
@@ -268,13 +255,10 @@
                     >
                         <Table
                             id="idAllSlots"
-                            class="sapUiResponsiveMargin"
                             alternateRowColors="true"
                             backgroundDesign="Transparent"
                             items="{/Parkinglot}"
                             width="30%"
-
-                            
                         >
                             <headerToolbar>
                                 <OverflowToolbar id="idSlotsTableHeader1">
@@ -301,8 +285,7 @@
                             </columns>
 
                             <items>
-                                <ColumnListItem id="idColumnListAllSlots" 
-                                                class="allslotstable">
+                                <ColumnListItem id="idColumnListAllSlots">
                                     <cells>
                                         <Text
                                             id="idSlotNoValue"
@@ -689,16 +672,6 @@
                                 class="Reserveheading"
                             />
                             <VBox id="ReserveVbox">
-                            <Label
-                                    id="idVedornameLabel"
-                                    text="Vendor Name"
-                                    class="Bold"
-                                />
-                                <Input
-                                    id="InputVedorname"
-                                    value="{reserveModel>/Reservations/vedorName}"
-                                    placeholder="Enter Vedor Name"
-                                />
                                 <Label
                                     id="idVehicleNumberLabel"
                                     text="Vehicle No"
@@ -839,12 +812,6 @@
                                 </OverflowToolbar>
                             </headerToolbar>
                             <columns>
-                               <Column id="idcolvedornameReserved">
-                                    <Text
-                                        id="idtextreservedvendor"
-                                        text="Vendor name"
-                                    />
-                                </Column>
                                 <Column id="idcolvehiclenoReserved">
                                     <Text
                                         id="idtextreservedvhno"
@@ -888,12 +855,6 @@
                                     id="Reservedslots"
                                     class="classassigned"
                                 >
-                                <cells>
-                                        <Text
-                                            id="cellvendorname"
-                                            text="{vendorName}"
-                                        />
-                                    </cells>
                                     <cells>
                                         <Text
                                             id="cellvno"

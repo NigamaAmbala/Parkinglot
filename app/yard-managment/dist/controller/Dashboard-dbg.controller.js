@@ -9,7 +9,7 @@ sap.ui.define([
     "sap/m/MessageToast",
 
 
-], function (Controller, Device, JSONModel, Fragment,Filter, FilterOperator, MessageBox, MessageToast) {
+], function (Controller, Device, JSONModel, Fragment, Filter, FilterOperator, MessageBox, MessageToast) {
     "use strict";
 
 
@@ -220,8 +220,6 @@ sap.ui.define([
             } catch (error) {
                 console.error("Error:", error);
             }
-            var sMessage=`Hello, ${driverName} your vehicle with vehicle number:${vehicleNo}  is allocated to slot number:${plotNo}`
-            this.onSms(phoneNumber,sMessage);
         },
         checkVehicleNo: async function (oModel, sVehicleNo) {
             return new Promise((resolve, reject) => {
@@ -385,22 +383,20 @@ sap.ui.define([
         },
 
         onReservePressbtn: async function () {
-            const svendorName = this.getView().byId("InputVedorname").getValue();
+
             const svehicleNo = this.getView().byId("InputVehicleno").getValue();
             const sdriverName = this.getView().byId("InputDriverName").getValue();
             const sphoneNumber = this.getView().byId("InputPhonenumber").getValue();
             const svehicleType = this.getView().byId("InputVehicletype").getValue();
-            const sReservedDate = this.getView().byId("InputEstimatedtime");
-            var sSelectedDateTime = sReservedDate.getDateValue();
+            const sReservedDate = this.getView().byId("InputEstimatedtime").getValue();
 
             const oReserveModel = new JSONModel({
                 Reservations: {
-                    vendorName:svendorName,
                     vehicleNo: svehicleNo,
                     driverName: sdriverName,
                     phoneNumber: sphoneNumber,
                     vehicleType: svehicleType,
-                    ReservedDate: sSelectedDateTime,
+                    ReservedDate: sReservedDate,
                     parkinglot_lotId: "",
                 },
                 parkinglot: {
@@ -414,12 +410,12 @@ sap.ui.define([
             const plotNo = this.getView().byId("productInput1").getValue();
             oPayload.Reservations.parkinglot_lotId = plotNo;
 
-            // var trimmedPhone = sphoneNumber.trim();
-            // var phoneRegex = /^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[789]\d{9}$/;
-            // if (!phoneRegex.test(trimmedPhone)) {
-            //     sap.m.MessageToast.show("Please enter a valid phone number");
-            //     return;
-            // }
+            var trimmedPhone = sphoneNumber.trim();
+            var phoneRegex = /^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[789]\d{9}$/;
+            if (!phoneRegex.test(trimmedPhone)) {
+                sap.m.MessageToast.show("Please enter a valid phone number");
+                return;
+            }
 
             if (!svehicleNo || !svehicleNo.match(/^[\w\d]{1,10}$/)) {
                 sap.m.MessageBox.error("Please enter a valid vehicle number (alphanumeric, up to 10 characters).");
@@ -429,15 +425,6 @@ sap.ui.define([
             const vehicleExists = await this.checkVehicleExists(oModel, svehicleNo);
             if (vehicleExists) {
                 sap.m.MessageBox.error("Vehicle number already Assigned. Please enter a different vehicle number.");
-                return;
-            }
-
-            var isReserved = await this.checkParkingLotReservation12(oModel, plotNo);
-            if (isReserved) {
-                sap.m.MessageBox.error(`Parking lot is already reserved. Please select another parking lot.`, {
-                    title: "Reservation Information",
-                    actions: sap.m.MessageBox.Action.OK
-                });
                 return;
             }
 
@@ -475,21 +462,6 @@ sap.ui.define([
                 });
             });
         },
-        checkParkingLotReservation12: async function (oModel, plotNo) {
-            return new Promise((resolve, reject) => {
-                oModel.read("/Reservations", {
-                    filters: [
-                        new sap.ui.model.Filter("parkinglot_lotId", sap.ui.model.FilterOperator.EQ, plotNo)
-                    ],
-                    success: function (oData) {
-                        resolve(oData.results.length > 0);
-                    },
-                    error: function () {
-                        reject("An error occurred while checking parking lot reservation.");
-                    }
-                });
-            });
-        },
         onclearPress1: function () {
             var oLocalModel = this.getView().getModel("reserveModel");
             oLocalModel.setProperty("/Reservations", {
@@ -516,7 +488,6 @@ sap.ui.define([
             var orow = this.byId("idReserved").getSelectedItem().getBindingContext().getPath();
             const intime = new Date;
             var resmodel = new JSONModel({
-               
                 vehicleNo: oSelectedRow.vehicleNo,
                 driverName: oSelectedRow.driverName,
                 phoneNumber: oSelectedRow.phoneNumber,
@@ -558,8 +529,6 @@ sap.ui.define([
                     sap.m.MessageBox.error("Failed to update : " + oError.message);
                 }
             })
-            var sMessage=`Hello, ${driverName} your vehicle with vehicle number:${vehicleNo}  is allocated to slot number:${parkinglot_lotId}`
-            this.onSms(phoneNumber,sMessage);
         },
         onGoPress: function () {
 
@@ -735,67 +704,5 @@ sap.ui.define([
             this.byId("saveButton").setVisible(false);
             this.byId("cancelButton").setVisible(false);
         },
-        onSms: function (sNumber,sMessage) {
-            // Replace with your actual Twilio Account SID and Auth Token
-           const accountSid = 'AC70f0825da4e9b68f38a5afe9cf2f12b1';
-        const authToken = '4100c6b11f47131ab585195130320a49';
- 
-            // Function to send SMS using Twili
-                debugger
-                const toNumber = `+91${sNumber}`; // Replace with recipient's phone number
-                const fromNumber = '+13342593915'; // Replace with your Twilio phone number
-                const messageBody = `${sMessage}`; // Message content
- 
-                // Twilio API endpoint for sending messages
-                const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
- 
-                // Payload for the POST request
-                const payload = {
-                    To: toNumber,
-                    From: fromNumber,
-                    Body: messageBody
-                };
- 
-                // Send POST request to Twilio API using jQuery.ajax
-                $.ajax({
-                    url: url,
-                    type: 'POST',
-                    headers: {
-                        'Authorization': 'Basic ' + btoa(accountSid + ':' + authToken)
-                    },
-                    data: payload,
-                    success: function (data) {
-                        console.log('SMS sent successfully:', data);
-                        // Handle success, e.g., show a success message
-                        sap.m.MessageToast.show('SMS sent successfully!');
-                    },
-                    error: function (xhr, status, error) {
-                        console.error('Error sending SMS:', error);
-                        // Handle error, e.g., show an error message
-                        sap.m.MessageToast.show('Failed to send SMS: ' + error);
-                    }
-                });
-           
-            },
-            onNotificationPress: function (oEvent) {
-                var oButton = oEvent.getSource(),
-                    oView = this.getView();
-           
-                // create popover
-                if (!this._pPopover) {
-                    this._pPopover = Fragment.load({
-                        id: oView.getId(),
-                        name: "com.app.yardmanagment.Fragments.Notifications",
-                        controller: this
-                    }).then(function (oPopover) {
-                        oView.addDependent(oPopover);
-                        oPopover.bindElement("");
-                        return oPopover;
-                    });
-                }
-                this._pPopover.then(function (oPopover) {
-                    oPopover.openBy(oButton);
-                });
-            },
     });
 });

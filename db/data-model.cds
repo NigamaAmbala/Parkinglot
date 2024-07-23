@@ -27,13 +27,15 @@ key vehicleNo    : String;
   vehicledetails : Association to VDetails;
 }
 
-entity Reservations {
+entity  Reservations {
   key vehicleNo  : String;
   driverName     : String;
   phoneNumber    : String;
   vehicleType    : String;
-  ReservedDate   : String;
+  ReservedDate   : DateTime;
   parkinglot     : Association to Parkinglot;
   vehicledetails : Association to VDetails;
+  vendorName : String;
+  vendorPhone : String;
   
 }
