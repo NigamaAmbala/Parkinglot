@@ -735,48 +735,7 @@ sap.ui.define([
             this.byId("saveButton").setVisible(false);
             this.byId("cancelButton").setVisible(false);
         },
-        onSms: function (sNumber,sMessage) {
-            // Replace with your actual Twilio Account SID and Auth Token
-           const accountSid = 'AC70f0825da4e9b68f38a5afe9cf2f12b1';
-        const authToken = '4100c6b11f47131ab585195130320a49';
- 
-            // Function to send SMS using Twili
-                debugger
-                const toNumber = `+91${sNumber}`; // Replace with recipient's phone number
-                const fromNumber = '+13342593915'; // Replace with your Twilio phone number
-                const messageBody = `${sMessage}`; // Message content
- 
-                // Twilio API endpoint for sending messages
-                const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
- 
-                // Payload for the POST request
-                const payload = {
-                    To: toNumber,
-                    From: fromNumber,
-                    Body: messageBody
-                };
- 
-                // Send POST request to Twilio API using jQuery.ajax
-                $.ajax({
-                    url: url,
-                    type: 'POST',
-                    headers: {
-                        'Authorization': 'Basic ' + btoa(accountSid + ':' + authToken)
-                    },
-                    data: payload,
-                    success: function (data) {
-                        console.log('SMS sent successfully:', data);
-                        // Handle success, e.g., show a success message
-                        sap.m.MessageToast.show('SMS sent successfully!');
-                    },
-                    error: function (xhr, status, error) {
-                        console.error('Error sending SMS:', error);
-                        // Handle error, e.g., show an error message
-                        sap.m.MessageToast.show('Failed to send SMS: ' + error);
-                    }
-                });
-           
-            },
+        
             onNotificationPress: function (oEvent) {
                 var oButton = oEvent.getSource(),
                     oView = this.getView();
