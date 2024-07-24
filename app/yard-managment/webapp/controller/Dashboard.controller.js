@@ -220,8 +220,6 @@ sap.ui.define([
             } catch (error) {
                 console.error("Error:", error);
             }
-            var sMessage=`Hello, ${driverName} your vehicle with vehicle number:${vehicleNo}  is allocated to slot number:${plotNo}`
-            this.onSms(phoneNumber,sMessage);
         },
         checkVehicleNo: async function (oModel, sVehicleNo) {
             return new Promise((resolve, reject) => {
@@ -558,8 +556,7 @@ sap.ui.define([
                     sap.m.MessageBox.error("Failed to update : " + oError.message);
                 }
             })
-            var sMessage=`Hello, ${oSelectedRow.driverName} your vehicle with vehicle number:${oSelectedRow.vehicleNo}  is allocated to slot number:${oSelectedRow.parkinglot_lotId}`
-            this.onSms( oSelectedRow.phoneNumber,sMessage);
+           
         },
         onGoPress: function () {
 
@@ -735,7 +732,6 @@ sap.ui.define([
             this.byId("saveButton").setVisible(false);
             this.byId("cancelButton").setVisible(false);
         },
-        
             onNotificationPress: function (oEvent) {
                 var oButton = oEvent.getSource(),
                     oView = this.getView();
