@@ -9,7 +9,7 @@
 >
     <Page
         id="page"
-        title="{i18n>title}"
+        title="Vendor Page"
         class="page"
     >
         <VBox

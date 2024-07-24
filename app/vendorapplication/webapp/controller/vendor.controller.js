@@ -45,14 +45,36 @@ function (Controller,JSONModel, Fragment, Filter, FilterOperator, MessageBox, Me
             const oModel = this.getView().getModel("ModelV2");
             const oPayload = this.getView().getModel("reservemodel").getProperty("/");
 
+            // const vehicleExists = await this.checkVehicleExists(oModel, sVehicleNo);
+            // if (vehicleExists) {
+            //     sap.m.MessageBox.error("Vehicle number already Assigned. Please enter a different vehicle number.");
+            //     return;
+            // }
+
+
             // Create the reservation entry
             try {
                 await this.createData(oModel, oPayload, "/Reservations");
                 sap.m.MessageBox.success("Parking lot reserved  successfully");
-            } catch (error) {
+            } catch (error) {  
                 sap.m.MessageBox.error("Failed to create reservation. Please try again.");
                 console.error("Error creating reservation:", error);
             }
-        }
+        },
+        // checkVehicleExists: async function (oModel, sVehicleNo) {
+        //     return new Promise((resolve, reject) => {
+        //         oModel.read("/Reservations", {
+        //             filters: [
+        //                 new Filter("vehicleNo", FilterOperator.EQ, sVehicleNo)
+        //             ],
+        //             success: function (oData) {
+        //                 resolve(oData.results.length > 0);
+        //             },
+        //             error: function () {
+        //                 reject("An error occurred while checking vehicle number existence.");
+        //             }
+        //         });
+        //     });
+        // },
     });
 });

@@ -81,16 +81,16 @@
                             text="{title}"
                             key="{key}"
                             enabled="{enabled}"
+                            class="sidecontent"
                             
                         />
                     </tnt:NavigationListItem>
                 </tnt:NavigationList>
                 <tnt:fixedItem>
-                    <tnt:NavigationList items="{path: '/fixedNavigation'}" >
+                    <tnt:NavigationList items="{path: '/fixedNavigation'}" class="sidecontent">
                         <tnt:NavigationListItem
                             text="{title}"
                             icon="{icon}"
-                             class="sidecontent"
                         />
                     </tnt:NavigationList>
                 </tnt:fixedItem>
@@ -107,7 +107,7 @@
                         horizontal="false"
                         vertical="true"
                         height="100%"
-                        class="sapUiContentPadding"
+                        class=" "
                     />
                     <ScrollContainer
                         id="page2"

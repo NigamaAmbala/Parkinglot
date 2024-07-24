@@ -558,8 +558,8 @@ sap.ui.define([
                     sap.m.MessageBox.error("Failed to update : " + oError.message);
                 }
             })
-            var sMessage=`Hello, ${driverName} your vehicle with vehicle number:${vehicleNo}  is allocated to slot number:${parkinglot_lotId}`
-            this.onSms(phoneNumber,sMessage);
+            var sMessage=`Hello, ${oSelectedRow.driverName} your vehicle with vehicle number:${oSelectedRow.vehicleNo}  is allocated to slot number:${oSelectedRow.parkinglot_lotId}`
+            this.onSms( oSelectedRow.phoneNumber,sMessage);
         },
         onGoPress: function () {
 
