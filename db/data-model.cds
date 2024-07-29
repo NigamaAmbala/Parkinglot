@@ -17,25 +17,26 @@ entity VDetails {
 }
 
 entity History {
-key vehicleNo    : String;
-  driverName     : String;
-  phoneNumber    : String;
-  vehicleType    : String;
-  inTime         : DateTime;
-  UnassignedDate : DateTime;
-  parkinglot     : Association to Parkinglot;
-  vehicledetails : Association to VDetails;
+  key vehicleNo      : String;
+      driverName     : String;
+      phoneNumber    : String;
+      vehicleType    : String;
+      inTime         : DateTime;
+      UnassignedDate : DateTime;
+      parkinglot     : Association to Parkinglot;
+      vehicledetails : Association to VDetails;
 }
 
-entity  Reservations {
-  key vehicleNo  : String;
-  driverName     : String;
-  phoneNumber    : String;
-  vehicleType    : String;
-  ReservedDate   : DateTime;
-  parkinglot     : Association to Parkinglot;
-  vehicledetails : Association to VDetails;
-  vendorName : String;
-  vendorPhone : String;
-  
+entity Reservations {
+  key vehicleNo      : String;
+      driverName     : String;
+      phoneNumber    : String;
+      vehicleType    : String;
+      ReservedDate   : DateTime;
+      parkinglot     : Association to Parkinglot;
+      vehicledetails : Association to VDetails;
+      vendorName     : String;
+      vendorPhone    : String;
+      notify         : String;
+
 }

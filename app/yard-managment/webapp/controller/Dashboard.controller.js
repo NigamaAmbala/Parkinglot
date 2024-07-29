@@ -9,7 +9,7 @@ sap.ui.define([
     "sap/m/MessageToast",
 
 
-], function (Controller, Device, JSONModel, Fragment,Filter, FilterOperator, MessageBox, MessageToast) {
+], function (Controller, Device, JSONModel, Fragment, Filter, FilterOperator, MessageBox, MessageToast) {
     "use strict";
 
 
@@ -38,6 +38,20 @@ sap.ui.define([
                 }
             });
             this.getView().setModel(oLocalModel, "localModel");
+
+            var today = new Date();  // Get the current date
+
+            // Get the date picker element by its ID ("InputEstimatedtime")
+            var oDateTimePicker = this.getView().byId("InputEstimatedtime");
+
+            // Set the minimum date for the date picker to today's date
+            oDateTimePicker.setMinDate(today);
+
+            // Set display format to show date and time
+            //oDateTimePicker.setDisplayFormat("yyyy-MM-dd HH:mm:ss");
+
+            // Optionally, set the initial value to the current datetime
+            // oDateTimePicker.setDateValue(today);
 
         },
 
@@ -159,6 +173,7 @@ sap.ui.define([
         // when you click on Assign Button
 
         onAssignPressbtn: async function () {
+            debugger
             const oPayload = this.getView().byId("page2").getModel("localModel").getProperty("/");
             const { driverName, phoneNumber, vehicleNo, vehicleType } = oPayload.VDetails;
             const oModel = this.getView().byId("pageContainer").getModel("ModelV2");
@@ -173,14 +188,43 @@ sap.ui.define([
                 return;
             }
 
-            var trimmedPhone = phoneNumber.trim();
-            var phoneRegex = /^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[789]\d{9}$/;
-            if (!phoneRegex.test(trimmedPhone)) {
-                sap.m.MessageToast.show("Please enter a valid phone number");
+            if (!/^\d{10}$/.test(oPayload.VDetails.phoneNumber)) {
+                this.getView().byId("driverPhoneInput").setValueState("Error").setValueStateText("Mobile number must be a '10-digit number'.");
+                return;
+            } else {
+                this.getView().byId("driverPhoneInput").setValueState("None");
+            }
+            //validate vehicle number
+            if (!/^[A-Z]{2}[0-9]{2}[A-Z]{2}[0-9]{4}$/.test(oPayload.VDetails.vehicleNo)) {  // Example format: XX00XX0000
+                this.getView().byId("idvehiclenoInput12").setValueState("Error").setValueStateText("Vehicle number format Should be like this 'AP21BE5678'.");
+                return;
+            } else {
+                this.getView().byId("idvehiclenoInput12").setValueState("None");
+            }
+
+            // var trimmedPhone = phoneNumber.trim();
+            // var phoneRegex = /^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[789]\d{9}$/;
+            // if (!phoneRegex.test(trimmedPhone)) {
+            //     sap.m.MessageToast.show("Please enter a valid phone number");
+            //     return;
+            // }
+
+            if (!/^\d{10}$/.test(phoneNumber)) {
+                this.getView().byId("driverPhoneInput").setValueState("Error").setValueStateText("Mobile number must be a '10-digit number'.");
+                return;
+            } else {
+                this.getView().byId("driverPhoneInput").setValueState("None");
+            }
+
+           //check modile number
+            var bDriverNumberExists = await this.checkIfExists(oModel, "/VDetails", "phoneNumber", oPayload.VDetails.phoneNumber);
+        
+            if (bDriverNumberExists) {
+                MessageBox.error("Phone number already exists.");
                 return;
             }
 
-
+            debugger
             var oVehicleExist = await this.checkVehicleNo(oModel, oPayload.VDetails.vehicleNo)
             if (oVehicleExist) {
                 MessageToast.show("Vehicle already exsist")
@@ -193,35 +237,57 @@ sap.ui.define([
                 return;
             }
 
-            var isReserved = await this.checkParkingLotReservation(oModel, plotNo);
-            if (isReserved) {
-                sap.m.MessageBox.error(`Parking lot ${plotNo} is already reserved. Please select another parking lot.`, {
-                    title: "Reservation Information",
-                    actions: sap.m.MessageBox.Action.OK
-                });
-                return;
-            }
-
             try {
                 // Assuming createData method sends a POST request
-                await this.createData(oModel, oPayload.VDetails, "/VDetails");
-                sap.m.MessageToast.show(`${vehicleNo} allocated to Slot No ${plotNo}`);
+                const reservation = await this.checkReservation(oModel, vehicleNo);
+                if (reservation) {
+                    // Vehicle found in Reservations, proceed with assignment
+                    // Create data in VDetails
+                    await this.createData(oModel, oPayload.VDetails, "/VDetails");
 
-                // Update parking lot entity
-                oModel.update("/Parkinglot('" + plotNo + "')", oPayload.parkinglot, {
-                    success: function () { },
-                    error: function (oError) {
-                        sap.m.MessageBox.error("Failed to update: " + oError.message);
+                    sap.m.MessageToast.show(`${vehicleNo} allocated to Slot No ${plotNo}`);
+
+                    // Update parking lot entity to indicate it's not available (e.g., set parkinglot_available = false)
+                    oModel.update("/Parkinglot('" + plotNo + "')", oPayload.parkinglot, {
+                        success: function () { },
+                        error: function (oError) {
+                            sap.m.MessageBox.error("Failed to update: " + oError.message);
+                        }
+                    });
+
+                    // Delete reservation entry
+                    await this.deleteData(oModel, "/Reservations", vehicleNo);
+                    sap.m.MessageToast.show(`${vehicleNo} assigned to Slot No ${plotNo}`);
+
+                } else {
+
+                    var isReserved = await this.checkParkingLotReservation(oModel, plotNo);
+                    if (isReserved) {
+                        sap.m.MessageBox.error(`Parking lot ${plotNo} is already reserved. Please select another parking lot.`, {
+                            title: "Reservation Information",
+                            actions: sap.m.MessageBox.Action.OK
+                        });
+                        return;
                     }
-                });
 
-                // Clear fields or perform any necessary actions
-                this.onclearPress();
+                    await this.createData(oModel, oPayload.VDetails, "/VDetails");
+                    sap.m.MessageToast.show(`${vehicleNo} allocated to Slot No ${plotNo}`);
+
+                    // Update parking lot entity
+                    oModel.update("/Parkinglot('" + plotNo + "')", oPayload.parkinglot, {
+                        success: function () { },
+                        error: function (oError) {
+                            sap.m.MessageBox.error("Failed to update: " + oError.message);
+                        }
+                    });
+                }
             } catch (error) {
                 console.error("Error:", error);
             }
+            this.onclearPress();
         },
         checkVehicleNo: async function (oModel, sVehicleNo) {
+            debugger
             return new Promise((resolve, reject) => {
                 oModel.read("/VDetails", {
                     filters: [
@@ -232,6 +298,19 @@ sap.ui.define([
                     },
                     error: function () {
                         reject("An error occurred while checking vehicle existence.");
+                    }
+                });
+            });
+        },
+        checkIfExists: async function (oModel, sEntitySet, sProperty, sValue) {
+            return new Promise((resolve, reject) => {
+                oModel.read(sEntitySet, {
+                    filters: [new sap.ui.model.Filter(sProperty, sap.ui.model.FilterOperator.EQ, sValue)],
+                    success: (oData) => {
+                        resolve(oData.results.length > 0);
+                    },
+                    error: (oError) => {
+                        reject(oError);
                     }
                 });
             });
@@ -248,9 +327,9 @@ sap.ui.define([
                 });
             });
         },
-        checkPlotEmpty: async function (oModel, sVehicalNo) {
+        checkReservation: async function (oModel, sVehicalNo) {
             return new Promise((resolve, reject) => {
-                oModel.read("/VDetails", {
+                oModel.read("/Reservations", {
                     filters: [
                         new Filter("vehicleNo", FilterOperator.EQ, sVehicalNo),
 
@@ -341,48 +420,80 @@ sap.ui.define([
         },
         // For vehicle number
         vehiclenumber: function (oEvent) {
-            debugger
+            debugger;
             const oLocalModel = this.getView().byId("page2").getModel("localModel");
             const oModel = this.getView().byId("pageContainer").getModel("ModelV2");
             const svehicleNo = oEvent.getParameter("value");
 
+            // Function to set vehicle details in the local model
+            const setVehicleDetails = (oVehicle) => {
+                oLocalModel.setProperty("/VDetails/vehicleNo", oVehicle.vehicleNo);
+                oLocalModel.setProperty("/VDetails/driverName", oVehicle.driverName);
+                oLocalModel.setProperty("/VDetails/phoneNumber", oVehicle.phoneNumber);
+                oLocalModel.setProperty("/VDetails/vehicleType", oVehicle.vehicleType);
+                oLocalModel.setProperty("/VDetails/inTime", oVehicle.inTime);
+                oLocalModel.setProperty("/VDetails/parkinglot_lotId", oVehicle.parkinglot_lotId);
+                this.oView.byId("productInput").setValue(oVehicle.parkinglot_lotId)
+            };
+
+            // Function to clear vehicle details in the local model
+            const clearVehicleDetails = () => {
+                oLocalModel.setProperty("/VDetails/vehicleNo", "");
+                oLocalModel.setProperty("/VDetails/driverName", "");
+                oLocalModel.setProperty("/VDetails/phoneNumber", "");
+                oLocalModel.setProperty("/VDetails/vehicleType", "");
+                oLocalModel.setProperty("/VDetails/inTime", "");
+                oLocalModel.setProperty("/VDetails/parkinglot_lotId", "");
+            };
+
+            // Read from VDetails entity
             oModel.read("/VDetails", {
-                filters: [
-                    new Filter("vehicleNo", FilterOperator.EQ, svehicleNo)
-                ],
+                filters: [new Filter("vehicleNo", FilterOperator.EQ, svehicleNo)],
                 success: function (oData) {
                     var aVehicles = oData.results;
                     if (aVehicles.length > 0) {
-                        // Assuming there's only one record with unique vehicalNo
+                        // Vehicle found in VDetails
                         var oVehicle = aVehicles[0];
-                        // Set other fields based on the found vehicle
-                        oLocalModel.setProperty("/VDetails/vehicleNo", oVehicle.vehicleNo);
-                        oLocalModel.setProperty("/VDetails/driverName", oVehicle.driverName);
-                        oLocalModel.setProperty("/VDetails/phoneNumber", oVehicle.phoneNumber);
-                        oLocalModel.setProperty("/VDetails/vehicleType", oVehicle.vehicleType);
-                        oLocalModel.setProperty("/VDetails/inTime", oVehicle.inTime);
-                        oLocalModel.setProperty("/VDetails/parkinglot_lotId", oVehicle.parkinglot_lotId);
-                        this.oView.byId("productInput").setValue(oVehicle.parkinglot_lotId)
-                        // Set other fields as needed
+                        setVehicleDetails(oVehicle);
                     } else {
-                        // Handle case where vehicle number was not found
-                        sap.m.MessageToast.show("Vehicle number not found.");
-                        // Optionally clear other fields
-                        oLocalModel.setProperty("/VDetails/vehicleNo", "");
-                        oLocalModel.setProperty("/VDetails/driverName", "");
-                        oLocalModel.setProperty("/VDetails/phoneNumber", "");
-                        oLocalModel.setProperty("/VDetails/vehicleType", "");
-                        oLocalModel.setProperty("/VDetails/inTime", "");
-                        // Clear other fields as needed
+                        // If not found in VDetails, check in Reservation
+                        oModel.read("/Reservations", {
+                            filters: [new Filter("vehicleNo", FilterOperator.EQ, svehicleNo)],
+                            success: function (oData) {
+                                var aReservations = oData.results;
+                                if (aReservations.length > 0) {
+                                    // Vehicle found in Reservation
+                                    var oReservation = aReservations[0];
+                                    // Assuming Reservation entity has similar fields
+                                    var oVehicleDetails = {
+                                        vehicleNo: oReservation.vehicleNo,
+                                        driverName: oReservation.driverName,
+                                        phoneNumber: oReservation.phoneNumber,
+                                        vehicleType: oReservation.vehicleType,
+                                        inTime: oReservation.reserveDate, // Adjust this field if necessary
+                                        parkinglot_lotId: oReservation.parkinglot_lotId
+                                    };
+                                    setVehicleDetails(oVehicleDetails);
+                                } else {
+                                    // Vehicle not found in both entities
+                                    sap.m.MessageToast.show("Vehicle number not found.");
+                                    clearVehicleDetails();
+                                }
+                            }.bind(this),
+                            error: function (oError) {
+                                sap.m.MessageToast.show("Error fetching reservation details: " + oError.message);
+                            }
+                        });
                     }
                 }.bind(this),
                 error: function (oError) {
+                    sap.m.MessageToast.show("Error fetching vehicle details: " + oError.message);
                 }
-
-            })
+            });
         },
 
         onReservePressbtn: async function () {
+
             const svendorName = this.getView().byId("InputVedorname").getValue();
             const svehicleNo = this.getView().byId("InputVehicleno").getValue();
             const sdriverName = this.getView().byId("InputDriverName").getValue();
@@ -390,10 +501,11 @@ sap.ui.define([
             const svehicleType = this.getView().byId("InputVehicletype").getValue();
             const sReservedDate = this.getView().byId("InputEstimatedtime");
             var sSelectedDateTime = sReservedDate.getDateValue();
-
+ 
             const oReserveModel = new JSONModel({
+
                 Reservations: {
-                    vendorName:svendorName,
+                    vendorName: svendorName,
                     vehicleNo: svehicleNo,
                     driverName: sdriverName,
                     phoneNumber: sphoneNumber,
@@ -406,30 +518,52 @@ sap.ui.define([
                 }
             });
             this.getView().setModel(oReserveModel, "reserveModel");
-
             const oPayload = this.getView().byId("page7").getModel("reserveModel").getProperty("/");
             const oModel = this.getView().byId("pageContainer").getModel("ModelV2");
             const plotNo = this.getView().byId("productInput1").getValue();
             oPayload.Reservations.parkinglot_lotId = plotNo;
-
-            // var trimmedPhone = sphoneNumber.trim();
-            // var phoneRegex = /^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[789]\d{9}$/;
-            // if (!phoneRegex.test(trimmedPhone)) {
-            //     sap.m.MessageToast.show("Please enter a valid phone number");
-            //     return;
-            // }
-
+ 
             if (!svehicleNo || !svehicleNo.match(/^[\w\d]{1,10}$/)) {
                 sap.m.MessageBox.error("Please enter a valid vehicle number (alphanumeric, up to 10 characters).");
                 return;
             }
-
+ 
             const vehicleExists = await this.checkVehicleExists(oModel, svehicleNo);
             if (vehicleExists) {
                 sap.m.MessageBox.error("Vehicle number already Assigned. Please enter a different vehicle number.");
                 return;
             }
+             
+            const plotAvailability = await this.checkPlotAvailability(oModel, plotNo);
+            if (!plotAvailability) {
+                sap.m.MessageToast.show("Plot not available for assignment.");
+                return;
+            }
+            //valid phone number
+            if (!/^\d{10}$/.test(sphoneNumber)) {
+                this.getView().byId("InputPhonenumber").setValueState("Error").setValueStateText("Mobile number must be a '10-digit number'.");
+                return;
 
+            } else {
+                this.getView().byId("InputPhonenumber").setValueState("None");
+            }
+            //validate vehicle number
+            if (!/^[A-Z]{2}[0-9]{2}[A-Z]{2}[0-9]{4}$/.test(svehicleNo)) {  // Example format: XX00XX0000
+                this.getView().byId("InputVehicleno").setValueState("Error").setValueStateText("Vehicle number format Should be like this 'AP21BE5678'.");
+                return;
+            } else {
+                this.getView().byId("InputVehicleno").setValueState("None");
+            }
+
+            var bDriverNumberExists = await this.checkIfExistsReserve(oModel, "/Reservations", "phoneNumber", sphoneNumber);
+            var bVehicleNumberExists = await this.checkIfExistsReserve(oModel, "/Reservations", "vehicleNo", svehicleNo);
+        
+            if (bDriverNumberExists || bVehicleNumberExists) {
+                sap.m.MessageBox.error("vehicle number or phone number already exists.");
+                return;
+            }
+ 
+ 
             var isReserved = await this.checkParkingLotReservation12(oModel, plotNo);
             if (isReserved) {
                 sap.m.MessageBox.error(`Parking lot is already reserved. Please select another parking lot.`, {
@@ -438,12 +572,12 @@ sap.ui.define([
                 });
                 return;
             }
-
+ 
             try {
                 // Assuming createData method sends a POST request
                 await this.createData(oModel, oPayload.Reservations, "/Reservations");
                 sap.m.MessageToast.show(`${svehicleNo} Reserved to Slot No ${plotNo}`);
-
+ 
                 // Update parking lot entity
                 // oModel.update("/Parkinglot('" + plotNo + "')", oPayload.parkinglot, {
                 //     success: function () { },
@@ -451,13 +585,17 @@ sap.ui.define([
                 //         sap.m.MessageBox.error("Failed to update: " + oError.message);
                 //     }
                 // });
-
+ 
                 // Clear fields or perform any necessary actions
+
                 this.onclearPress1();
+
             } catch (error) {
                 console.error("Error:", error);
             }
+
         },
+        
         checkVehicleExists: async function (oModel, sVehicleNo) {
             return new Promise((resolve, reject) => {
                 oModel.read("/VDetails", {
@@ -469,6 +607,31 @@ sap.ui.define([
                     },
                     error: function () {
                         reject("An error occurred while checking vehicle number existence.");
+                    }
+                });
+            });
+        },
+        checkPlotAvailability: async function (oModel, plotNo) {
+            return new Promise((resolve, reject) => {
+                oModel.read("/Parkinglot('" + plotNo + "')", {
+                    success: function (oData) {
+                        resolve(oData.parkingType);
+                    },
+                    error: function (oError) {
+                        reject("Error checking plot availability: " + oError.message);
+                    }
+                });
+            });
+        },
+        checkIfExistsReserve: async function (oModel, sEntitySet, sProperty, sValue) {
+            return new Promise((resolve, reject) => {
+                oModel.read(sEntitySet, {
+                    filters: [new sap.ui.model.Filter(sProperty, sap.ui.model.FilterOperator.EQ, sValue)],
+                    success: (oData) => {
+                        resolve(oData.results.length > 0);
+                    },
+                    error: (oError) => {
+                        reject(oError);
                     }
                 });
             });
@@ -489,18 +652,13 @@ sap.ui.define([
             });
         },
         onclearPress1: function () {
-            var oLocalModel = this.getView().getModel("reserveModel");
-            oLocalModel.setProperty("/Reservations", {
-                vehicleNo: "",
-                driverName: "",
-                phoneNumber: "",
-                vehicleType: "",
-                ReservedDate: "",
-                parkinglot_lotId: ""
-            });
-
-            // Clear any other necessary fields or models
-            this.getView().byId("productInput1").setValue("");
+            var svendorName = this.getView().byId("InputVedorname").setValue();
+            var svehicleNo = this.getView().byId("InputVehicleno").setValue();
+            var sdriverName = this.getView().byId("InputDriverName").setValue();
+            var sphoneNumber = this.getView().byId("InputPhonenumber").setValue();
+            var svehicleType = this.getView().byId("InputVehicletype").setValue();
+            var sReservedDate = this.getView().byId("InputEstimatedtime").setValue();
+            var sParkingLot = this.getView().byId("productInput1").setValue();
         },
         onpressassignrd: async function () {
             debugger
@@ -514,7 +672,7 @@ sap.ui.define([
             var orow = this.byId("idReserved").getSelectedItem().getBindingContext().getPath();
             const intime = new Date;
             var resmodel = new JSONModel({
-               
+
                 vehicleNo: oSelectedRow.vehicleNo,
                 driverName: oSelectedRow.driverName,
                 phoneNumber: oSelectedRow.phoneNumber,
@@ -556,7 +714,7 @@ sap.ui.define([
                     sap.m.MessageBox.error("Failed to update : " + oError.message);
                 }
             })
-           
+
         },
         onGoPress: function () {
 
@@ -732,25 +890,66 @@ sap.ui.define([
             this.byId("saveButton").setVisible(false);
             this.byId("cancelButton").setVisible(false);
         },
-            onNotificationPress: function (oEvent) {
-                var oButton = oEvent.getSource(),
-                    oView = this.getView();
-           
-                // create popover
-                if (!this._pPopover) {
-                    this._pPopover = Fragment.load({
-                        id: oView.getId(),
-                        name: "com.app.yardmanagment.Fragments.Notifications",
-                        controller: this
-                    }).then(function (oPopover) {
-                        oView.addDependent(oPopover);
-                        oPopover.bindElement("");
-                        return oPopover;
-                    });
-                }
-                this._pPopover.then(function (oPopover) {
-                    oPopover.openBy(oButton);
+        onNotificationPress: function (oEvent) {
+            var oButton = oEvent.getSource(),
+                oView = this.getView();
+
+            // create popover
+            if (!this._pPopover) {
+                this._pPopover = Fragment.load({
+                    id: oView.getId(),
+                    name: "com.app.yardmanagment.Fragments.Notifications",
+                    controller: this
+                }).then(function (oPopover) {
+                    oView.addDependent(oPopover);
+                    oPopover.setModel(oModel);
+                    return oPopover;
                 });
-            },
+            }
+            this._pPopover.then(function (oPopover) {
+                oPopover.openBy(oButton);
+            });
+            var oModel = this.getOwnerComponent().getModel("ModelV2");
+            this.getView().byId("idnotificationDialog").setModel(oModel);
+
+        },
+
+        // for search help
+        onSearch: function (event) {
+            debugger
+            var sQuery = event.getSource().getValue();
+            var oTable = this.byId("idReserved");
+            var oBinding = oTable.getBinding("items");
+ 
+            if (oBinding) {
+                var oFilter = new sap.ui.model.Filter([
+                    new Filter("parkinglot_lotId", FilterOperator.Contains, sQuery),
+                    new Filter("vehicleNo", FilterOperator.Contains, sQuery),
+                    new Filter("driverName", FilterOperator.Contains, sQuery),
+                    new Filter("phoneNumber", FilterOperator.Contains, sQuery),
+                    new Filter("vendorName", FilterOperator.Contains, sQuery)
+                ], false);
+                oBinding.filter(oFilter);
+            }
+ 
+        },
+        onSearch12: function (event) {
+            debugger
+            var sQuery = event.getSource().getValue();
+            var oTable = this.byId("idAllocatedSlots");
+            var oBinding = oTable.getBinding("items");
+ 
+            if (oBinding) {
+                var oFilter = new sap.ui.model.Filter([
+                    new Filter("parkinglot_lotId", FilterOperator.Contains, sQuery),
+                    new Filter("vehicleNo", FilterOperator.Contains, sQuery),
+                    new Filter("driverName", FilterOperator.Contains, sQuery),
+                    new Filter("phoneNumber", FilterOperator.Contains, sQuery)
+
+                ], false);
+                oBinding.filter(oFilter);
+            }
+ 
+        }
     });
 });

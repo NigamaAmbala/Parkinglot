@@ -16,8 +16,8 @@
     height="100%"
 >
     <tnt:ToolPage id="toolPage">
-        <tnt:header >
-            <tnt:ToolHeader >
+        <tnt:header>
+            <tnt:ToolHeader>
                 <Button
                     id="sideNavigationToggleButton"
                     icon="sap-icon://menu2"
@@ -42,23 +42,19 @@
                         />
                     </layoutData>
                 </ToolbarSpacer>
-                
-                    <Button
-                        icon="sap-icon://bell"
-                        press="onNotificationPress"
-                        type="Transparent"
-                    >
+
+                <Button
+                    icon="sap-icon://bell"
+                    press="onNotificationPress"
+                    type="Transparent"
+                >
                     <customData>
-                    <BadgeCustomData
-                     value="{/Reservations/$count}"
-                            visible="true" >
-                   
-                   
-                    </BadgeCustomData>
+                        <BadgeCustomData
+                            value="{/Reservations/$count}"
+                            visible="true"
+                        />
                     </customData>
-                   
-                    </Button>
-                
+                </Button>
             </tnt:ToolHeader>
         </tnt:header>
         <tnt:sideContent>
@@ -67,7 +63,10 @@
                 selectedKey="{/selectedKey}"
                 itemSelect=".onItemSelect"
             >
-                <tnt:NavigationList items="{path: '/navigation'}"  class="sidecontent">
+                <tnt:NavigationList
+                    items="{path: '/navigation'}"
+                    class="sidecontent"
+                >
                     <tnt:NavigationListItem
                         text="{title}"
                         icon="{icon}"
@@ -82,12 +81,14 @@
                             key="{key}"
                             enabled="{enabled}"
                             class="sidecontent"
-                            
                         />
                     </tnt:NavigationListItem>
                 </tnt:NavigationList>
                 <tnt:fixedItem>
-                    <tnt:NavigationList items="{path: '/fixedNavigation'}" class="sidecontent">
+                    <tnt:NavigationList
+                        items="{path: '/fixedNavigation'}"
+                        class="sidecontent"
+                    >
                         <tnt:NavigationListItem
                             text="{title}"
                             icon="{icon}"
@@ -116,148 +117,145 @@
                         height="100%"
                         class="sapUiContentPadding"
                     >
-                        <FlexBox
-                            id="idflex"
-                            justifyContent="Center"
-                            alignItems="Center"
-                            height="80%"
+                        <f:SimpleForm
+                            id="AssignForm"
+                            layout="ResponsiveGridLayout"
+                            editable="true"
+                            columnsM="2"
+                            columnsL="3"
+                            columnsXL="4"
+                            class="SimpleForm"
                         >
-                            <VBox
-                                id="_IDGenVBox1"
-                                width="30%"
-                            >
+                            
                                 <VBox
-                                    id="_IDGenVBox3"
+                                    id="_IDvehiclenoVBox12"
                                     width="100%"
                                 >
-                                    <VBox
-                                        id="_IDvehiclenoVBox12"
+                                    <Label
+                                        id="_IDvehiclenoLabel12"
+                                        text="Vehicle no"
+                                        class="Bold"
+                                    />
+                                    <Input
+                                        id="idvehiclenoInput12"
+                                        placeholder="Enter vehicle number"
                                         width="100%"
-                                    >
-                                        <Label
-                                            id="_IDvehiclenoLabel12"
-                                            text="Vehicle no"
-                                            class="Bold"
-                                        />
-                                        <Input
-                                            id="idvehiclenoInput12"
-                                            placeholder="Enter vehicle number"
-                                            width="100%"
-                                            value="{localModel>/VDetails/vehicleNo}"
-                                            submit=".vehiclenumber"
-                                        />
-                                    </VBox>
-
-                                    <VBox
-                                        id="_IDGenVBox4"
-                                        width="100%"
-                                    >
-                                        <Label
-                                            id="_IDGenLabel1"
-                                            text="Driver Name"
-                                            class="Bold"
-                                        />
-                                        <Input
-                                            id="driverNameInput"
-                                            placeholder="Enter driver's name"
-                                            width="100%"
-                                            value="{localModel>/VDetails/driverName}"
-                                        />
-                                    </VBox>
-
-                                    <VBox
-                                        id="_IDGenVBox5"
-                                        width="100%"
-                                    >
-                                        <Label
-                                            id="_IDGenLabel2"
-                                            text="Driver Phone Number"
-                                            class="Bold"
-                                        />
-                                        <Input
-                                            id="driverPhoneInput"
-                                            placeholder="Enter driver's phone number"
-                                            width="100%"
-                                            type="Tel"
-                                            value="{localModel>/VDetails/phoneNumber}"
-                                        />
-                                    </VBox>
-
-                                    <VBox
-                                        id="_IDGenVBox6"
-                                        width="100%"
-                                    >
-                                        <Label
-                                            id="_IDGenLabel3"
-                                            text="vehicle Type"
-                                            class="Bold"
-                                        />
-                                        <Input
-                                            id="vehicletypeInput"
-                                            placeholder="Enter vehicle type"
-                                            width="100%"
-                                            type="Tel"
-                                            value="{localModel>/VDetails/vehicleType}"
-                                        />
-                                    </VBox>
-
-                                    <VBox
-                                        id="_IDGenVBox7"
-                                        width="100%"
-                                    >
-                                        <Label
-                                            id="_IDGenLabel4"
-                                            text="Parking Lot Number"
-                                            class="Bold"
-                                        />
-                                        <Input
-                                            id="productInput"
-                                            placeholder="Enter praking lot"
-                                            showSuggestion="true"
-                                            showValueHelp="true"
-                                            valueHelpRequest=".onValueHelpRequest"
-                                            suggestionItems="{/Parkinglot}"
-                                            value="{parkinglot_lotId}"
-                                        >
-                                            <suggestionItems>
-                                                <core:ListItem
-                                                    key="{lotId}"
-                                                    text="{lotId}"
-                                                    additionalText="{lotId}"
-                                                />
-                                            </suggestionItems>
-                                        </Input>
-                                    </VBox>
-
-                                    <HBox
-                                        id="_IDGenHBox1"
-                                        width="100%"
-                                        alignItems="Center"
-                                        class="Hbox"
-                                    >
-                                        <Button
-                                            id="idbuttonassign"
-                                            text="Assign"
-                                            press="onAssignPressbtn"
-                                            type="Success"
-                                        />
-                                        <Button
-                                            id="idbuttonunassign"
-                                            text="Unassign"
-                                            press="onUnassignPressbtn"
-                                            type="Negative"
-                                        />
-                                        <Button
-                                            id="idbuttonunclear"
-                                            text="Clear"
-                                            press="onclearPress"
-                                            width="120px"
-                                            type="Accept"
-                                        />
-                                    </HBox>
+                                        value="{localModel>/VDetails/vehicleNo}"
+                                        submit=".vehiclenumber"
+                                    />
                                 </VBox>
-                            </VBox>
-                        </FlexBox>
+
+                                <VBox
+                                    id="_IDGenVBox4"
+                                    width="100%"
+                                >
+                                    <Label
+                                        id="_IDGenLabel1"
+                                        text="Driver Name"
+                                        class="Bold"
+                                    />
+                                    <Input
+                                        id="driverNameInput"
+                                        placeholder="Enter driver's name"
+                                        width="100%"
+                                        value="{localModel>/VDetails/driverName}"
+                                    />
+                                </VBox>
+
+                                <VBox
+                                    id="_IDGenVBox5"
+                                    width="100%"
+                                >
+                                    <Label
+                                        id="_IDGenLabel2"
+                                        text="Driver Phone Number"
+                                        class="Bold"
+                                    />
+                                    <Input
+                                        id="driverPhoneInput"
+                                        placeholder="Enter driver's phone number"
+                                        width="100%"
+                                        type="Tel"
+                                        value="{localModel>/VDetails/phoneNumber}"
+                                    />
+                                </VBox>
+
+                                <VBox
+                                    id="_IDGenVBox6"
+                                    width="100%"
+                                >
+                                    <Label
+                                        id="_IDGenLabel3"
+                                        text="vehicle Type"
+                                        class="Bold"
+                                    />
+                                    <Input
+                                        id="vehicletypeInput"
+                                        placeholder="Enter vehicle type"
+                                        width="100%"
+                                        type="Tel"
+                                        value="{localModel>/VDetails/vehicleType}"
+                                    />
+                                </VBox>
+
+                                <VBox
+                                    id="_IDGenVBox7"
+                                    width="100%"
+                                >
+                                    <Label
+                                        id="_IDGenLabel4"
+                                        text="Parking Lot Number"
+                                        class="Bold"
+                                    />
+                                    <Input
+                                        id="productInput"
+                                        placeholder="Enter praking lot"
+                                        showSuggestion="true"
+                                        showValueHelp="true"
+                                        valueHelpRequest=".onValueHelpRequest"
+                                        suggestionItems="{/Parkinglot}"
+                                        value="{parkinglot_lotId}"
+                                    >
+                                        <suggestionItems>
+                                            <core:ListItem
+                                                key="{lotId}"
+                                                text="{lotId}"
+                                                additionalText="{lotId}"
+                                            />
+                                        </suggestionItems>
+                                    </Input>
+                                </VBox>
+
+                                <HBox
+                                    id="_IDGenHBox1"
+                                    width="100%"
+                                    alignItems="Center"
+                                    class="Hbox"
+                                >
+                                    <Button
+                                        id="idbuttonassign"
+                                        text="Assign"
+                                        press="onAssignPressbtn"
+                                        type="Success"
+                                        class="Abutton"
+                                    />
+                                    <Button
+                                        id="idbuttonunassign"
+                                        text="Unassign"
+                                        press="onUnassignPressbtn"
+                                        type="Negative"
+                                        class="Abutton1"
+                                    />
+                                    <!-- <Button
+                                        id="idbuttonunclear"
+                                        text="Clear"
+                                        press="onclearPress"
+                                        width="120px"
+                                        type="Accept"
+                                        
+                                    /> -->
+                                </HBox>
+                         </f:SimpleForm>
                     </ScrollContainer>
                     <ScrollContainer
                         id="page3"
@@ -268,13 +266,12 @@
                     >
                         <Table
                             id="idAllSlots"
-                            class="sapUiResponsiveMargin"
                             alternateRowColors="true"
                             backgroundDesign="Transparent"
                             items="{/Parkinglot}"
                             width="30%"
-
-                            
+                            mode="MultiSelect" 
+                            class="Allslotsclasstable"
                         >
                             <headerToolbar>
                                 <OverflowToolbar id="idSlotsTableHeader1">
@@ -301,8 +298,10 @@
                             </columns>
 
                             <items>
-                                <ColumnListItem id="idColumnListAllSlots" 
-                                                class="allslotstable">
+                                <ColumnListItem
+                                    id="idColumnListAllSlots"
+                                    class="AllTables"
+                                >
                                     <cells>
                                         <Text
                                             id="idSlotNoValue"
@@ -327,7 +326,7 @@
                         horizontal="false"
                         vertical="true"
                         height="100%"
-                        class="sapUiContentPadding"
+                       class="sapUiContentPadding"
                     >
                         <Table
                             id="idEmptySlots"
@@ -335,6 +334,8 @@
                             backgroundDesign="Transparent"
                             items="{/Parkinglot}"
                             width="30%"
+                            mode="MultiSelect"
+                            class="emptyclasstable"
                         >
                             <headerToolbar>
                                 <OverflowToolbar id="idSlotsTableHeader2">
@@ -388,7 +389,7 @@
                         horizontal="false"
                         vertical="true"
                         height="100%"
-                        class="sapUiContentPadding"
+                       class="sapUiContentPadding"
                     >
                         <Table
                             id="idAllocatedSlots"
@@ -396,6 +397,7 @@
                             backgroundDesign="Transparent"
                             items="{/VDetails}"
                             mode="MultiSelect"
+                            class="Allocatedslotstableclass"
                         >
                             <headerToolbar>
                                 <OverflowToolbar id="idSlotsTableHeader">
@@ -405,6 +407,12 @@
                                         class="Titles"
                                     />
                                     <ToolbarSpacer id="idTableHeaderSpacer" />
+                                    <SearchField
+                                        id="idSearchField12"
+                                        width="200px"
+                                        placeholder="Search..."
+                                        liveChange="onSearch12"
+                                    />
                                     <Button
                                         id="editButton"
                                         text="Edit"
@@ -469,7 +477,7 @@
                                 </Column>
                             </columns>
                             <items>
-                                <ColumnListItem id="idColumnListAlocatedSlots">
+                                <ColumnListItem id="idColumnListAlocatedSlots" class="Allocatedtable">
                                     <cells>
                                         <VBox>
                                             <Text
@@ -477,18 +485,17 @@
                                                 text="{parkinglot_lotId}"
                                             />
                                             <ComboBox
-                                    id="parkingLotSelectComboBox"
-                                    selectedKey="{parkinglot_lotId}"
-    
-                                    items="{path: '/Parkinglot', filters: [{path: 'parkingType', operator: 'EQ', value1: true}], parameters:{$count:true}, templateShareable:true }"
-                                    visible="false"
-                                >
-                                    <core:Item
-                                        id="IDParkinglotnumgen"
-                                        key="{lotId}"
-                                        text="{lotId}"
-                                    />
-                                </ComboBox>
+                                                id="parkingLotSelectComboBox"
+                                                selectedKey="{parkinglot_lotId}"
+                                                items="{path: '/Parkinglot', filters: [{path: 'parkingType', operator: 'EQ', value1: true}], parameters:{$count:true}, templateShareable:true }"
+                                                visible="false"
+                                            >
+                                                <core:Item
+                                                    id="IDParkinglotnumgen"
+                                                    key="{lotId}"
+                                                    text="{lotId}"
+                                                />
+                                            </ComboBox>
                                         </VBox>
                                         <VBox>
                                             <Text
@@ -499,6 +506,7 @@
                                                 id="idvehiclenumber"
                                                 value="{vehicleNo}"
                                                 visible="false"
+                                                editable="false"
                                             />
                                         </VBox>
                                         <VBox>
@@ -510,6 +518,7 @@
                                                 id="idintime"
                                                 value="{inTime}"
                                                 visible="false"
+                                                editable="false"
                                             />
                                         </VBox>
                                         <VBox>
@@ -521,6 +530,7 @@
                                                 id="idvehicletype12"
                                                 value="{vehicleType}"
                                                 visible="false"
+                                                editable="false"
                                             />
                                         </VBox>
                                         <VBox>
@@ -532,6 +542,7 @@
                                                 id="iddrivername"
                                                 value="{driverName}"
                                                 visible="false"
+                                                editable="false"
                                             />
                                         </VBox>
                                         <VBox>
@@ -543,6 +554,7 @@
                                                 id="iddriverPhno"
                                                 value="{phoneNumber}"
                                                 visible="false"
+                                                editable="false"
                                             />
                                         </VBox>
                                     </cells>
@@ -563,6 +575,7 @@
                             backgroundDesign="Transparent"
                             items="{/History}"
                             mode="MultiSelect"
+                            class="HistoryTablecalss"
                         >
                             <headerToolbar>
                                 <OverflowToolbar id="idHistoryTableHeader">
@@ -689,7 +702,7 @@
                                 class="Reserveheading"
                             />
                             <VBox id="ReserveVbox">
-                            <Label
+                                <Label
                                     id="idVedornameLabel"
                                     text="Vendor Name"
                                     class="Bold"
@@ -792,7 +805,7 @@
                         horizontal="false"
                         vertical="true"
                         height="100%"
-                        class="sapUiContentPadding"
+                       class="sapUiContentPadding"
                     >
                         <Table
                             id="idReserved"
@@ -800,6 +813,7 @@
                             backgroundDesign="Transparent"
                             items="{/Reservations}"
                             mode="MultiSelect"
+                            class="Reserveslottableclass"
                         >
                             <headerToolbar>
                                 <OverflowToolbar id="idReservedTableHeader">
@@ -809,27 +823,12 @@
                                         class="Titles"
                                     />
                                     <ToolbarSpacer id="idTableHeaderreserve" />
-                                    <HBox
-                                        id="idHbox"
-                                        class="searchInput"
-                                    >
-                                        <Label
-                                            id="idSerarchLabel"
-                                            class="Bold"
-                                        />
-                                        <Input
-                                            id="searchinput"
-                                            value=""
-                                            placeholder="Enter vehicle No"
-                                        />
-
-                                        <Button
-                                            id="Gobutton"
-                                            text="GO"
-                                            type="Attention"
-                                            press="onGoPress"
-                                        />
-                                    </HBox>
+                                      <SearchField
+                                        id="idSearchField"
+                                        width="200px"
+                                        placeholder="Search..."
+                                        liveChange="onSearch"
+                                    />
                                     <Button
                                         id="idassign"
                                         press="onpressassignrd"
@@ -839,7 +838,7 @@
                                 </OverflowToolbar>
                             </headerToolbar>
                             <columns>
-                               <Column id="idcolvedornameReserved">
+                                <Column id="idcolvedornameReserved">
                                     <Text
                                         id="idtextreservedvendor"
                                         text="Vendor name"
@@ -888,7 +887,7 @@
                                     id="Reservedslots"
                                     class="classassigned"
                                 >
-                                <cells>
+                                    <cells>
                                         <Text
                                             id="cellvendorname"
                                             text="{vendorName}"

@@ -1,9 +1,15 @@
 /* Enter your custom styles here */
 .SmartformVbox{
     margin-top: 40px;
+    margin-left: 200px;
 }
 .page{
     background-color: antiquewhite;
+    background-image: url("https://thumbs.dreamstime.com/z/aerial-view-goods-warehouse-logistics-center-industrial-city-zone-above-trucks-loading-logistic-206869788.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 100vh;
 }
 
 .Reserveheading{
