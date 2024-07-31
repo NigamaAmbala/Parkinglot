@@ -259,6 +259,8 @@ sap.ui.define([
                     await this.deleteData(oModel, "/Reservations", vehicleNo);
                     sap.m.MessageToast.show(`${vehicleNo} assigned to Slot No ${plotNo}`);
 
+                    this.triggerPrintForm(oPayload.VDetails);
+
                 } else {
 
                     var isReserved = await this.checkParkingLotReservation(oModel, plotNo);
@@ -280,6 +282,7 @@ sap.ui.define([
                             sap.m.MessageBox.error("Failed to update: " + oError.message);
                         }
                     });
+                    this.triggerPrintForm(oPayload.VDetails);
                 }
             } catch (error) {
                 console.error("Error:", error);
@@ -505,6 +508,7 @@ sap.ui.define([
             const oReserveModel = new JSONModel({
 
                 Reservations: {
+
                     vendorName: svendorName,
                     vehicleNo: svehicleNo,
                     driverName: sdriverName,
@@ -588,14 +592,14 @@ sap.ui.define([
  
                 // Clear fields or perform any necessary actions
 
-                this.onclearPress1();
-
             } catch (error) {
                 console.error("Error:", error);
             }
 
+            this.onclearPress1();
+ 
         },
-        
+
         checkVehicleExists: async function (oModel, sVehicleNo) {
             return new Promise((resolve, reject) => {
                 oModel.read("/VDetails", {
@@ -950,6 +954,65 @@ sap.ui.define([
                 oBinding.filter(oFilter);
             }
  
-        }
+        },
+        //for count in notifications
+        onModel: async function () {
+            var oModel = this.getView().getModel("ModelV2");
+            var that = this;
+            await oModel.read("/Reservations", {
+                success: function (oData) {
+                    var t = oData.results.length;
+                    that.byId("idnotificationsbadge").setValue(t);
+                },
+                error: function () {
+                }
+            })
+ 
+            oModel.refresh()
+        },
+        onBeforeRendering: function () {
+            this.onModel();
+ 
+        },
+        onAfterRendering: function () {
+            this.onModel();
+        },
+        // for print form 
+        triggerPrintForm: function (VDetails) {
+			// Create a temporary print area
+			debugger
+			var printWindow = window.open('', '', 'height=500,width=800');
+			printWindow.document.write('<html><head><title>Parking Lot Allocation</title>');
+			printWindow.document.write('<style>body{font-family: Arial, sans-serif;} table{width: 100%; border-collapse: collapse;} td, th{border: 1px solid #ddd; padding: 8px;} th{padding-top: 12px; padding-bottom: 12px; text-align: left; background-color: #4CAF50; color: white;}</style>');
+			printWindow.document.write('</head><body>');
+			printWindow.document.write('<h2>Parking Lot Allocation</h2>');
+			printWindow.document.write('<table><tr><th>Field</th><th>Value</th></tr>');
+			printWindow.document.write('<tr><td>Vehicle Number</td><td>' + VDetails.vehicleNo + '</td></tr>');
+			printWindow.document.write('<tr><td>Driver Name</td><td>' + VDetails.driverName + '</td></tr>');
+			printWindow.document.write('<tr><td>Phone</td><td>' + VDetails.phoneNumber + '</td></tr>');
+			printWindow.document.write('<tr><td>Vehicle Type</td><td>' + VDetails.vehicleType + '</td></tr>');
+			printWindow.document.write('<tr><td>Plot Number</td><td>' + VDetails.parkinglot_lotId + '</td></tr>');
+			printWindow.document.write('<tr><td>Assigned Date</td><td>' + VDetails.inTime + '</td></tr>');
+		
+			// Generate barcode
+			debugger
+			const barcodeValue = `${VDetails.vehicleNo}`;
+			const canvas = document.createElement('canvas');
+			JsBarcode(canvas, barcodeValue, {
+				format: "CODE128",
+				lineColor: "#0aa",
+				width: 4,
+				height: 40,
+				displayValue: true
+			});
+			const barcodeImage = canvas.toDataURL("image/png");
+		
+			// Add barcode to print
+			printWindow.document.write('<tr><td>Barcode</td><td><img src="' + barcodeImage + '" alt="Barcode"></td></tr>');
+			printWindow.document.write('</table>');
+			printWindow.document.write('</body></html>');
+			printWindow.document.close();
+			printWindow.print();
+		},
     });
-});
+}); 

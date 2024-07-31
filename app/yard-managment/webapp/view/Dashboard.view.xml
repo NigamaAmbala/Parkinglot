@@ -50,7 +50,7 @@
                 >
                     <customData>
                         <BadgeCustomData
-                            value="{/Reservations/$count}"
+                            id="idnotificationsbadge"
                             visible="true"
                         />
                     </customData>

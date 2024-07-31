@@ -31,7 +31,10 @@
                     text="RESERVATION"
                     class="Reserveheading"
                 />
-                <VBox id="ReserveVbox">
+                <VBox
+                    id="ReserveVbox"
+                    class="Vbox"
+                >
                     <Label
                         id="idVendorNameLabel"
                         text="Vedor Name"
