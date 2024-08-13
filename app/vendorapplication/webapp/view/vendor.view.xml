@@ -102,7 +102,7 @@
                                                filters: [{
                                                path: 'parkingType',
                                                operator: 'EQ',
-                                                value1: true
+                                                value1: 'Available'
                                                }]
                                              }"
                     >

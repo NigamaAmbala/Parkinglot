@@ -2,7 +2,7 @@ namespace my.parkinglots;
 
 entity Parkinglot {
   key lotId          : String;
-      parkingType    : Boolean;
+      parkingType    : String;
       vehicledetails : Association to VDetails;
 }
 

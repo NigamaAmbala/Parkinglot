@@ -85,6 +85,21 @@ function (Controller,JSONModel, Filter, FilterOperator, MessageBox, MessageToast
             try {
                 await this.createData(oModel, oPayload, "/Reservations");
                 sap.m.MessageBox.success("Parking lot reserved  successfully");
+
+                const updatedParkingLot = {
+                    parkingType: "Reserved" // Assuming false represents empty parking
+                    // Add other properties if needed
+                };
+
+                //Update parking lot entity
+                oModel.update("/Parkinglot('" + sParkingLot + "')", updatedParkingLot, {
+                    success: function () { },
+                    error: function (oError) {
+                        sap.m.MessageBox.error("Failed to update: " + oError.message);
+                    }
+                });
+
+
             } catch (error) {  
                 sap.m.MessageBox.error("Failed to create reservation. Please try again.");
                 console.error("Error creating reservation:", error);

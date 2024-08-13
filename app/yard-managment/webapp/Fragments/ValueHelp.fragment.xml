@@ -4,7 +4,7 @@
 		title="Parking lots"
 		items="{
         path: '/Parkinglot',
-        filters: [{ path: 'parkingType', operator: 'EQ', value1: true }]}"
+        filters: [{ path: 'parkingType', operator: 'EQ', value1: 'Available' }]}"
 		search=".onValueHelpDialogSearch1"
 		confirm=".onValueHelpDialogClose1"
 		cancel=".onValueHelpDialogClose1">

@@ -311,10 +311,7 @@
                                     <cells>
                                         <Text
                                             id="idProcessvalue"
-                                            text="{
-                                               path: 'parkingType',
-                                                formatter: '.statusTextFormatter'
-                                            }"
+                                            text="{parkingType}" 
                                         />
                                     </cells>
                                 </ColumnListItem>
@@ -363,7 +360,6 @@
                             <items>
                                 <ColumnListItem
                                     id="idColumnListAllSlots1"
-                                    visible="{path : 'parkingType'}"
                                 >
                                     <cells>
                                         <Text
@@ -374,10 +370,7 @@
                                     <cells>
                                         <Text
                                             id="idProcessvale"
-                                            text="{
-                                               path: 'parkingType',
-                                                formatter: '.statusTextFormatter'
-                                            }"
+                                            text="{parkingType}"
                                         />
                                     </cells>
                                 </ColumnListItem>
@@ -487,7 +480,7 @@
                                             <ComboBox
                                                 id="parkingLotSelectComboBox"
                                                 selectedKey="{parkinglot_lotId}"
-                                                items="{path: '/Parkinglot', filters: [{path: 'parkingType', operator: 'EQ', value1: true}], parameters:{$count:true}, templateShareable:true }"
+                                                items="{path: '/Parkinglot', filters: [{path: 'parkingType', operator: 'EQ', value1: 'Available'}], parameters:{$count:true}, templateShareable:true }"
                                                 visible="false"
                                             >
                                                 <core:Item

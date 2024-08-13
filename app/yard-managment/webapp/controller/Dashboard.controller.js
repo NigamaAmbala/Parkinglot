@@ -34,7 +34,7 @@ sap.ui.define([
                     parkinglot_lotId: "",
                 },
                 parkinglot: {
-                    parkingType: false
+                    parkingType: "Occupied"
                 }
             });
             this.getView().setModel(oLocalModel, "localModel");
@@ -77,9 +77,9 @@ sap.ui.define([
                 oToggleButton.setTooltip('Small Size Navigation');
             }
         },
-        statusTextFormatter: function (bStatus) {
-            return bStatus ? "Empty" : "Not Empty"; // Modify as per your requirement
-        },
+        // statusTextFormatter: function (bStatus) {
+        //     return bStatus ? "Empty" : "Not Empty"; // Modify as per your requirement
+        // },
         // for value help request for Assigning
         onValueHelpRequest: function (oEvent) {
             var sInputValue = oEvent.getSource().getValue(),
@@ -187,7 +187,7 @@ sap.ui.define([
                 sap.m.MessageToast.show("Enter all details");
                 return;
             }
-
+           // validate phone number
             if (!/^\d{10}$/.test(oPayload.VDetails.phoneNumber)) {
                 this.getView().byId("driverPhoneInput").setValueState("Error").setValueStateText("Mobile number must be a '10-digit number'.");
                 return;
@@ -200,27 +200,14 @@ sap.ui.define([
                 return;
             } else {
                 this.getView().byId("idvehiclenoInput12").setValueState("None");
-            }
-
-            // var trimmedPhone = phoneNumber.trim();
-            // var phoneRegex = /^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[789]\d{9}$/;
-            // if (!phoneRegex.test(trimmedPhone)) {
-            //     sap.m.MessageToast.show("Please enter a valid phone number");
-            //     return;
-            // }
-
-            if (!/^\d{10}$/.test(phoneNumber)) {
-                this.getView().byId("driverPhoneInput").setValueState("Error").setValueStateText("Mobile number must be a '10-digit number'.");
-                return;
-            } else {
-                this.getView().byId("driverPhoneInput").setValueState("None");
-            }
+            } 
 
            //check modile number
             var bDriverNumberExists = await this.checkIfExists(oModel, "/VDetails", "phoneNumber", oPayload.VDetails.phoneNumber);
+            var plotAssigned = await this.checkIfExists(oModel, "/VDetails", "parkinglot_lotId", oPayload.VDetails.parkinglot_lotId);
         
-            if (bDriverNumberExists) {
-                MessageBox.error("Phone number already exists.");
+            if (bDriverNumberExists || plotAssigned) {
+                MessageBox.error(" plot Number or Phone number already assigned ");
                 return;
             }
 
@@ -247,8 +234,13 @@ sap.ui.define([
 
                     sap.m.MessageToast.show(`${vehicleNo} allocated to Slot No ${plotNo}`);
 
+                    const updatedParkingLot = {
+                        parkingType: "Occupied" // Assuming false represents empty parking
+                        // Add other properties if needed
+                    };
+
                     // Update parking lot entity to indicate it's not available (e.g., set parkinglot_available = false)
-                    oModel.update("/Parkinglot('" + plotNo + "')", oPayload.parkinglot, {
+                    oModel.update("/Parkinglot('" + plotNo + "')", updatedParkingLot, {
                         success: function () { },
                         error: function (oError) {
                             sap.m.MessageBox.error("Failed to update: " + oError.message);
@@ -275,8 +267,13 @@ sap.ui.define([
                     await this.createData(oModel, oPayload.VDetails, "/VDetails");
                     sap.m.MessageToast.show(`${vehicleNo} allocated to Slot No ${plotNo}`);
 
+                    const updatedParkingLot = {
+                        parkingType: "Occupied" // Assuming false represents empty parking
+                        // Add other properties if needed
+                    };
+    
                     // Update parking lot entity
-                    oModel.update("/Parkinglot('" + plotNo + "')", oPayload.parkinglot, {
+                    oModel.update("/Parkinglot('" + plotNo + "')", updatedParkingLot, {
                         success: function () { },
                         error: function (oError) {
                             sap.m.MessageBox.error("Failed to update: " + oError.message);
@@ -399,7 +396,7 @@ sap.ui.define([
 
                 // Update parking lot entity to mark it as empty
                 const updatedParkingLot = {
-                    parkingType: true // Assuming false represents empty parking
+                    parkingType: "Available" // Assuming false represents empty parking
                     // Add other properties if needed
                 };
 
@@ -543,6 +540,7 @@ sap.ui.define([
                 sap.m.MessageToast.show("Plot not available for assignment.");
                 return;
             }
+            
             //valid phone number
             if (!/^\d{10}$/.test(sphoneNumber)) {
                 this.getView().byId("InputPhonenumber").setValueState("Error").setValueStateText("Mobile number must be a '10-digit number'.");
@@ -581,14 +579,19 @@ sap.ui.define([
                 // Assuming createData method sends a POST request
                 await this.createData(oModel, oPayload.Reservations, "/Reservations");
                 sap.m.MessageToast.show(`${svehicleNo} Reserved to Slot No ${plotNo}`);
- 
-                // Update parking lot entity
-                // oModel.update("/Parkinglot('" + plotNo + "')", oPayload.parkinglot, {
-                //     success: function () { },
-                //     error: function (oError) {
-                //         sap.m.MessageBox.error("Failed to update: " + oError.message);
-                //     }
-                // });
+
+                const updatedParkingLot = {
+                    parkingType: "Reserved" // Assuming false represents empty parking
+                    // Add other properties if needed
+                };
+
+                //Update parking lot entity
+                oModel.update("/Parkinglot('" + plotNo + "')", updatedParkingLot, {
+                    success: function () { },
+                    error: function (oError) {
+                        sap.m.MessageBox.error("Failed to update: " + oError.message);
+                    }
+                });
  
                 // Clear fields or perform any necessary actions
 
@@ -615,9 +618,11 @@ sap.ui.define([
                 });
             });
         },
+         
         checkPlotAvailability: async function (oModel, plotNo) {
+            debugger;
             return new Promise((resolve, reject) => {
-                oModel.read("/Parkinglot('" + plotNo + "')", {
+                oModel.read("/Parkinglot('" + plotNo + "')",   {
                     success: function (oData) {
                         resolve(oData.parkingType);
                     },
@@ -627,6 +632,7 @@ sap.ui.define([
                 });
             });
         },
+
         checkIfExistsReserve: async function (oModel, sEntitySet, sProperty, sValue) {
             return new Promise((resolve, reject) => {
                 oModel.read(sEntitySet, {
@@ -697,7 +703,7 @@ sap.ui.define([
                     oModel.remove(orow, {
                         success: function () {
                             oModel.refresh()
-                            oModel.update("/Parkinglot('" + temp + "')", { parkingType: false }, {
+                            oModel.update("/Parkinglot('" + temp + "')", { parkingType: "Occupied" }, {
                                 success: function () {
                                     sap.m.MessageBox.success(`Reserved Vehicle ${oSelectedRow.vehicleNo} assigned successfully to plot ${oSelectedRow.parkinglot_lotId}.`);
                                     oModel.refresh();
@@ -751,21 +757,25 @@ sap.ui.define([
                 success: function (oData) {
                     console.log("Fetched Data:", oData);
                     var aItems = oData.results;
-                    var availableCount = aItems.filter(item => item.parkingType === true).length;
-                    var occupiedCount = aItems.filter(item => item.parkingType === false).length;
+                    var availableCount = aItems.filter(item => item.parkingType === "Available").length;
+                    var occupiedCount = aItems.filter(item => item.parkingType === "Occupied").length;
+                    var reserveCount = aItems.filter(item => item.parkingType === "Reserved").length;
+
 
                     var aChartData = {
                         Items: [
                             {
-                                parkingType: true,
-                                Count: availableCount,
-                                parkingType: "Available"
+                                parkingType: "Available",
+                                Count: availableCount
                             },
                             {
-                                parkingType: false,
-                                Count: occupiedCount,
-                                parkingType: "Occupied"
-                            }
+                                parkingType: "Occupied",
+                                Count: occupiedCount
+                            },
+                            {
+                                parkingType: "Reserved",
+                                Count: reserveCount
+                              }
                         ]
                     };
                     var oParkingLotModel = new JSONModel();
@@ -851,13 +861,13 @@ sap.ui.define([
                     success: function () {
                         // Update old Parkinglot to empty (parkingType: true -> false)
                         const updatedParkingLot = {
-                            parkingType: true // Assuming true represents empty parking
+                            parkingType: "Available" // Assuming true represents empty parking
                         };
                         oDataModel.update("/Parkinglot('" + sOldSlotNumber + "')", updatedParkingLot, {
                             success: function () {
                                 // Update new Parkinglot to occupied (parkingType: false -> true)
                                 const updatedNewParkingLot = {
-                                    parkingType: false // Assuming false represents occupied parking
+                                    parkingType: "Occupied" // Assuming false represents occupied parking
                                 };
                                 oDataModel.update("/Parkinglot('" + sSlotNumber + "')", updatedNewParkingLot, {
                                     success: function () {
